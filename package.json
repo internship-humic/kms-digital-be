@@ -1,0 +1,32 @@
+{
+  "name": "jagacilik",
+  "version": "1.0.0",
+  "description": "Aplikasi Posyandu JagaCilik",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "seed:admin": "node src/utils/seeders/admin.seeder.js",
+    "migrate": "npx prisma migrate dev -n"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.2",
+    "chalk": "^5.6.2",
+    "dotenv": "^16.5.0",
+    "express": "^5.2.1",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.6.0",
+    "morgan": "^1.10.1",
+    "prisma": "^6.19.2",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
