@@ -24,7 +24,7 @@ model Parents {
   password     String
   address      String
   clinic_id    String
-  phone_number String
+  phone_number String   @unique
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 

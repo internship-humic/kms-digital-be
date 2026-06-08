@@ -46,6 +46,12 @@ class AuthService extends BaseService {
     const existing = await this.db.parents.findUnique({ where: { email } });
     if (existing) throw this.error.badRequest("Email already registered");
 
+    const existingPhoneNumber = await this.db.parents.findUnique({
+      where: { phone_number },
+    });
+    if (existingPhoneNumber)
+      throw this.error.badRequest("Phone number already registered");
+
     const newUser = await this.db.parents.create({
       data: {
         name,
