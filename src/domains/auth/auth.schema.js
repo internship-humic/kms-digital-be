@@ -36,6 +36,15 @@ const registerSchema = Joi.object({
       "string.empty": "Password confirmation is required.",
       "any.only": "Password confirmation does not match password.",
     }),
+  address: Joi.string().required().messages({
+    "string.empty": "Address is required.",
+  }),
+  clinic_id: Joi.string().required().messages({
+    "string.empty": "Clinic ID is required.",
+  }),
+  phone_number: Joi.string().required().messages({
+    "string.empty": "Phone number is required.",
+  }),
 });
 
 const activationSchema = Joi.object({

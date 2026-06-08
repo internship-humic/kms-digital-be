@@ -18,14 +18,15 @@ model Admin {
 }
 
 model Parents {
-  id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  password   String
-  address    String
-  clinic_id  String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  address      String
+  clinic_id    String
+  phone_number String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   clinic   Clinic     @relation(fields: [clinic_id], references: [id])
   children Children[]
