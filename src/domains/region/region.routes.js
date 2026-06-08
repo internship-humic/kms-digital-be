@@ -14,24 +14,16 @@ class RegionRoutes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/province/:Keyword?", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
+    this.router.get("/province", [
       this.errCatch(this.controller.getProvinces.bind(this.controller)),
     ]);
-    this.router.get("/regency/:ProvinceId/:Keyword?", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
+    this.router.get("/regency/:provinceId", [
       this.errCatch(this.controller.getRegencies.bind(this.controller)),
     ]);
-    this.router.get("/district/:RegencyId/:Keyword?", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
+    this.router.get("/district/:regencyId", [
       this.errCatch(this.controller.getDistricts.bind(this.controller)),
     ]);
-    this.router.get("/village/:DistrictId/:Keyword?", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
+    this.router.get("/village/:districtId", [
       this.errCatch(this.controller.getVillages.bind(this.controller)),
     ]);
   }
