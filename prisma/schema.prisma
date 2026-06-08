@@ -22,10 +22,28 @@ model Parents {
   name       String
   email      String   @unique
   password   String
+  address    String
+  clinic_id  String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  clinic   Clinic     @relation(fields: [clinic_id], references: [id])
+  children Children[]
+
   @@map("parents")
+}
+
+model Children {
+  id         String   @id @default(uuid())
+  name       String
+  birth_date DateTime
+  parent_id  String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  parent Parents @relation(fields: [parent_id], references: [id], onDelete: Cascade)
+
+  @@map("children")
 }
 
 model Cadre {
@@ -91,6 +109,21 @@ model Village {
   deleted_at DateTime?
 
   district District @relation(fields: [district_id], references: [id], onDelete: Cascade)
+  clinics  Clinic[]
 
   @@map("villages")
+}
+
+model Clinic {
+  id         String   @id @default(uuid())
+  name       String
+  address    String
+  village_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  village Village   @relation(fields: [village_id], references: [id], onDelete: Cascade)
+  parents Parents[]
+
+  @@map("clinics")
 }
