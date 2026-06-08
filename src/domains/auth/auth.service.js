@@ -16,17 +16,14 @@ class AuthService extends BaseService {
   async login(info) {
     const { email, password } = info;
 
-    // Cek di tabel parents
     let user = await this.db.parents.findUnique({ where: { email } });
     let role = Roles.Parents;
 
-    // Cek di tabel cadre
     if (!user) {
       user = await this.db.cadre.findUnique({ where: { email } });
       role = Roles.Cadre;
     }
 
-    // Cek di tabel admin
     if (!user) {
       user = await this.db.admin.findUnique({ where: { email } });
       role = Roles.Admin;
@@ -64,12 +61,15 @@ class AuthService extends BaseService {
   async activateCadre(info) {
     const { name, email, password } = info;
 
-    // Pastikan email belum terdaftar di cadre maupun parents
     const existingCadre = await this.db.cadre.findUnique({ where: { email } });
-    if (existingCadre) throw this.error.badRequest("Email already registered as Cadre");
+    if (existingCadre)
+      throw this.error.badRequest("Email already registered as Cadre");
 
-    const existingParents = await this.db.parents.findUnique({ where: { email } });
-    if (existingParents) throw this.error.badRequest("Email already registered as Parents");
+    const existingParents = await this.db.parents.findUnique({
+      where: { email },
+    });
+    if (existingParents)
+      throw this.error.badRequest("Email already registered as Parents");
 
     const newCadre = await this.db.cadre.create({
       data: {

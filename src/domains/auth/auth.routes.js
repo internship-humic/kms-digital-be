@@ -1,6 +1,10 @@
 import AuthController from "./auth.controller.js";
 import BaseRoutes from "../../common/base_classes/base-routes.js";
-import { loginSchema, registerSchema, activationSchema } from "./auth.schema.js";
+import {
+  loginSchema,
+  registerSchema,
+  activationSchema,
+} from "./auth.schema.js";
 
 class AuthRoutes extends BaseRoutes {
   constructor() {
@@ -15,19 +19,17 @@ class AuthRoutes extends BaseRoutes {
   }
 
   routes() {
-    // POST /api/auth/login — semua role (PARENTS, CADRE, ADMIN)
     this.router.post("/login", [
       this.validate(loginSchema),
       this.errCatch(this.controller.login.bind(this.controller)),
     ]);
 
-    // POST /api/auth/register — pendaftaran PARENTS (publik)
     this.router.post("/register", [
       this.validate(registerSchema),
+      this.auth.role([this.roles.Parents]),
       this.errCatch(this.controller.register.bind(this.controller)),
     ]);
 
-    // POST /api/auth/activation — aktivasi CADRE oleh ADMIN (protected)
     this.router.post("/activation", [
       this.auth.authenticate,
       this.auth.role([this.roles.Admin]),

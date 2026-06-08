@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url     = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Admin {
@@ -37,4 +37,60 @@ model Cadre {
   updated_at DateTime @updatedAt
 
   @@map("cadres")
+}
+
+model Province {
+  id   String @id
+  name String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  regencies  Regency[]
+
+  @@map("provinces")
+}
+
+model Regency {
+  id          String @id
+  province_id String
+  name        String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  province  Province   @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  districts District[]
+
+  @@map("regencies")
+}
+
+model District {
+  id         String @id
+  regency_id String
+  name       String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  regency  Regency   @relation(fields: [regency_id], references: [id], onDelete: Cascade)
+  villages Village[]
+
+  @@map("districts")
+}
+
+model Village {
+  id          String @id
+  district_id String
+  name        String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  district District @relation(fields: [district_id], references: [id], onDelete: Cascade)
+
+  @@map("villages")
 }

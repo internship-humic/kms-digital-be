@@ -7,6 +7,8 @@ class AdminSeeder extends BaseSeeder {
   }
 
   async seed(email, password) {
+    console.time("seed");
+    
     const normalized = email.toLowerCase();
 
     const exists = await this.db.admin.findUnique({
@@ -29,6 +31,8 @@ class AdminSeeder extends BaseSeeder {
     });
 
     this.log.info(`Admin seeded: ${created.email}`);
+
+    console.timeEnd("seed");
   }
 }
 
@@ -45,4 +49,4 @@ BaseSeeder.run(async function AdminSeed() {
 });
 
 // Contoh penggunaan:
-// npm run seed:admin admin@jagacilik.com Admin123!
+// npm run seed:admin <email> <password>"
