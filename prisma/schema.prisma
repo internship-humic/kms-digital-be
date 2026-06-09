@@ -44,7 +44,7 @@ model Children {
 
   parent Parents @relation(fields: [parent_id], references: [id], onDelete: Cascade)
 
-  @@map("children")
+  @@map("childrens")
 }
 
 model Cadre {
