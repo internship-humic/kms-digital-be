@@ -9,7 +9,7 @@ class ChildrenController extends BaseController {
     // this.service = ChildrenService
   }
 
-  async getChildrens(req, res) {
+  async getAllChildrens(req, res) {
     const query = req.query;
     const data = await this.service.getAllChildrens(query);
     return this.response.success(

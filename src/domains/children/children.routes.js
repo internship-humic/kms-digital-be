@@ -23,7 +23,7 @@ class ChildrenRoutes extends BaseRoutes {
 
     this.router.get("/:parentId", [
       this.auth.authenticate,
-      this.errCatch(this.controller.getAllChildrensByParent.bind(this.controller)),
+      this.errCatch(this.controller.getChildrensByParent.bind(this.controller)),
     ]);
 
     this.router.post("/", [
