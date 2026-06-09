@@ -26,7 +26,6 @@ class AuthRoutes extends BaseRoutes {
 
     this.router.post("/register", [
       this.validate(registerSchema),
-      this.auth.role([this.roles.Parents]),
       this.errCatch(this.controller.register.bind(this.controller)),
     ]);
 

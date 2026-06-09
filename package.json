@@ -12,6 +12,7 @@
     "start": "node src/server.js",
     "seed:admin": "node src/utils/seeders/admin.seeder.js",
     "seed:region": "node src/utils/seeders/region.seeder.js",
+    "seed:clinic": "node src/utils/seeders/clinic.seeder.js",
     "migrate": "npx prisma migrate dev -n",
     "make:domain": "node src/utils/make-domain.util.js make:domain"
   },
