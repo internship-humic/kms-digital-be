@@ -20,7 +20,11 @@ class ChildrenController extends BaseController {
     );
   }
 
-  async getChildrensByParent(req, res) {}
+  async getChildrensByParent(req, res) {
+    const { parentId } = req.params;
+    const data = await this.service.getChildrensByParent(parentId);
+    return this.response.success(res, data, "Childrens retrieved successfully");
+  }
 
   async createChildren(req, res) {}
 }

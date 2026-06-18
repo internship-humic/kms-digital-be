@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Childrentatus {
+  NORMAL
+  LOWRISK
+  HIGHRISK
+}
+
 model Admin {
   id         String   @id @default(uuid())
   email      String   @unique
@@ -28,19 +39,24 @@ model Parents {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  clinic   Clinic     @relation(fields: [clinic_id], references: [id])
-  children Children[]
+  clinic   Clinic      @relation(fields: [clinic_id], references: [id])
+  children Childrens[]
 
   @@map("parents")
 }
 
-model Children {
-  id         String   @id @default(uuid())
-  name       String
-  birth_date DateTime
-  parent_id  String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+model Childrens {
+  id          String         @id @default(uuid())
+  name        String
+  birth_date  DateTime
+  parent_id   String
+  gender      Gender
+  body_weight Float
+  body_height Float
+  address     String
+  status      Childrentatus?
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @updatedAt
 
   parent Parents @relation(fields: [parent_id], references: [id], onDelete: Cascade)
 
