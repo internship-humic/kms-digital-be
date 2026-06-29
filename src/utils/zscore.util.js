@@ -8,7 +8,7 @@ import bbtbMale24 from "../database/z-score/BeratTinggiBadanLakiLaki24.json" wit
 import bbtbMale60 from "../database/z-score/BeratTinggiBadanLakiLaki60.json" with { type: "json" };
 import bbtbFemale24 from "../database/z-score/BeratTinggiBadanPerempuan24.json" with { type: "json" };
 import bbtbFemale60 from "../database/z-score/BeratTinggiBadanPerempuan60.json" with { type: "json" };
-import { calculateAgeInMonths } from "./age.util.js";
+import calculateAgeInMonths from "./age.util.js";
 import Gender from "../common/enums/gender.enum.js";
 
 function findByAge(dataset, age) {
