@@ -46,21 +46,46 @@ model Parents {
 }
 
 model Childrens {
-  id          String         @id @default(uuid())
-  name        String
-  birth_date  DateTime
-  parent_id   String
-  gender      Gender
-  body_weight Float
-  body_height Float
-  address     String
-  status      Childrentatus?
-  created_at  DateTime       @default(now())
-  updated_at  DateTime       @updatedAt
+  id         String         @id @default(uuid())
+  name       String
+  birth_date DateTime
+  parent_id  String
+  gender     Gender
+  address    String
+  status     Childrentatus?
 
-  parent Parents @relation(fields: [parent_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  parent       Parents        @relation(fields: [parent_id], references: [id], onDelete: Cascade)
+  measurements Measurements[]
 
   @@map("childrens")
+}
+
+model Measurements {
+  id String @id @default(uuid())
+
+  children_id      String
+  measurement_date DateTime
+
+  age_month Int
+
+  body_weight        Float
+  body_height        Float
+  head_circumference Float?
+
+  zscore_bb   Float?
+  zscore_tb   Float?
+  zscore_lk   Float?
+  zscore_gizi Float?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  children Childrens @relation(fields: [children_id], references: [id], onDelete: Cascade)
+
+  @@map("measurements")
 }
 
 model Cadre {
