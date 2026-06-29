@@ -26,7 +26,26 @@ class ChildrenController extends BaseController {
     return this.response.success(res, data, "Childrens retrieved successfully");
   }
 
-  async createChildren(req, res) {}
+  async createChildren(req, res) {
+    const info = req.body;
+    const data = await this.service.createChildren(info);
+    return this.response.success(res, data, "Children created successfully");
+  }
+
+  async updateChildren(req, res) {
+    const { id } = req.params;
+    const info = req.body;
+    const data = await this.service.updateChildren(id, info);
+    return this.response.success(res, data, "Children updated successfully");
+  }
+
+  async deleteChildren(req, res) {
+    const { id } = req.params;
+
+    await this.service.deleteChildren(id);
+
+    return this.response.success(res, null, "Children deleted successfully");
+  }
 }
 
 export default new ChildrenController();

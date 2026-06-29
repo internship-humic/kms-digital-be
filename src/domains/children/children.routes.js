@@ -32,6 +32,19 @@ class ChildrenRoutes extends BaseRoutes {
       this.validate(childrenSchema),
       this.errCatch(this.controller.createChildren.bind(this.controller)),
     ]);
+
+    this.router.put("/:id", [
+      this.auth.authenticate,
+      this.auth.role([this.roles.Cadre, this.roles.Admin]),
+      this.validate(childrenSchema),
+      this.errCatch(this.controller.updateChildren.bind(this.controller)),
+    ]);
+
+    this.router.delete("/:id", [
+      this.auth.authenticate,
+      this.auth.role([this.roles.Cadre, this.roles.Admin]),
+      this.errCatch(this.controller.deleteChildren.bind(this.controller)),
+    ]);
   }
 }
 
