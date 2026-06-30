@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import BaseSeeder from "../../common/base_classes/base-seeder.js";
 
 class ParentsSeeder extends BaseSeeder {

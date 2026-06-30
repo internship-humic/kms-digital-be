@@ -1,4 +1,4 @@
-import Gender from "../../common/enums/gender.js";
+import Gender from "../../common/enums/gender.enum.js";
 import BaseSeeder from "../../common/base_classes/base-seeder.js";
 
 class ChildrenSeeder extends BaseSeeder {
@@ -34,7 +34,6 @@ class ChildrenSeeder extends BaseSeeder {
           parent_id: parent.id,
           gender,
           address: parent.address,
-          status: "ACTIVE",
         });
 
         counter++;
