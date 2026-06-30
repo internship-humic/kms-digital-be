@@ -1,4 +1,3 @@
-
 import Joi from "joi";
 
 const measurementSchema = Joi.object({
@@ -8,23 +7,17 @@ const measurementSchema = Joi.object({
     })
     .required(),
 
-  measurement_date: Joi.date()
-    .required(),
+  clinic_id: Joi.string().required(),
 
-  body_weight: Joi.number()
-    .positive()
-    .max(100)
-    .required(),
+  measurement_date: Joi.date().required(),
 
-  body_height: Joi.number()
-    .positive()
-    .max(200)
-    .required(),
+  description: Joi.string().max(500).allow(null, ""),
 
-  head_circumference: Joi.number()
-    .positive()
-    .max(100)
-    .allow(null),
+  body_weight: Joi.number().positive().max(100).required(),
+
+  body_height: Joi.number().positive().max(200).required(),
+
+  head_circumference: Joi.number().positive().max(100).allow(null),
 });
 
 export { measurementSchema };

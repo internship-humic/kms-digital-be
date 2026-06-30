@@ -47,6 +47,7 @@ class MeasurementService extends BaseService {
             status: true,
           },
         },
+        clinic: true,
       },
       skip: offset,
       take: limit,
@@ -68,6 +69,7 @@ class MeasurementService extends BaseService {
       },
       include: {
         children: true,
+        clinic: true,
       },
     });
 
@@ -151,39 +153,36 @@ class MeasurementService extends BaseService {
       measurementDate,
     });
 
-    const status = calculateRiskStatus(zscores);
+    const status = calculateRiskStatus(zscore);
 
-    return await this.db.measurements.create({
-      data: {
-        children_id: children.id,
+    return await this.db.$transaction(async (tx) => {
+      const measurement = await tx.measurements.create({
+        data: {
+          children_id: children.id,
+          clinic_id: body.clinic_id,
+          measurement_date: measurementDate,
+          age_month: ageMonth,
+          description: body.description,
+          body_weight: body.body_weight,
+          body_height: body.body_height,
+          head_circumference: body.head_circumference ?? null,
+          zscore_bb: zscore.zscore_bb,
+          zscore_tb: zscore.zscore_tb,
+          zscore_lk: zscore.zscore_lk,
+          zscore_gizi: zscore.zscore_gizi,
+        },
+      });
 
-        measurement_date: measurementDate,
+      await tx.childrens.update({
+        where: {
+          id: children.id,
+        },
+        data: {
+          status,
+        },
+      });
 
-        age_month: ageMonth,
-
-        body_weight: body.body_weight,
-
-        body_height: body.body_height,
-
-        head_circumference: body.head_circumference ?? null,
-
-        zscore_bb: zscore.zscore_bb,
-
-        zscore_tb: zscore.zscore_tb,
-
-        zscore_lk: zscore.zscore_lk,
-
-        zscore_gizi: zscore.zscore_gizi,
-      },
-    });
-
-    await tx.childrens.update({
-      where: {
-        id: children.id,
-      },
-      data: {
-        status,
-      },
+      return measurement;
     });
   }
 
@@ -213,40 +212,38 @@ class MeasurementService extends BaseService {
       measurementDate,
     });
 
-    const status = calculateRiskStatus(zscores);
+    const status = calculateRiskStatus(zscore);
 
-    return await this.db.measurements.update({
-      where: {
-        id: measurementId,
-      },
-      data: {
-        measurement_date: measurementDate,
+    return await this.db.$transaction(async (tx) => {
+      const updatedMeasurement = await tx.measurements.update({
+        where: {
+          id: measurementId,
+        },
+        data: {
+          clinic_id: body.clinic_id,
+          measurement_date: measurementDate,
+          age_month: ageMonth,
+          description: body.description,
+          body_weight: body.body_weight,
+          body_height: body.body_height,
+          head_circumference: body.head_circumference ?? null,
+          zscore_bb: zscore.zscore_bb,
+          zscore_tb: zscore.zscore_tb,
+          zscore_lk: zscore.zscore_lk,
+          zscore_gizi: zscore.zscore_gizi,
+        },
+      });
 
-        age_month: ageMonth,
+      await tx.childrens.update({
+        where: {
+          id: children.id,
+        },
+        data: {
+          status,
+        },
+      });
 
-        body_weight: body.body_weight,
-
-        body_height: body.body_height,
-
-        head_circumference: body.head_circumference ?? null,
-
-        zscore_bb: zscore.zscore_bb,
-
-        zscore_tb: zscore.zscore_tb,
-
-        zscore_lk: zscore.zscore_lk,
-
-        zscore_gizi: zscore.zscore_gizi,
-      },
-    });
-
-    await tx.childrens.update({
-      where: {
-        id: children.id,
-      },
-      data: {
-        status,
-      },
+      return updatedMeasurement;
     });
   }
 

@@ -67,9 +67,11 @@ model Measurements {
   id String @id @default(uuid())
 
   children_id      String
+  clinic_id        String
   measurement_date DateTime
 
-  age_month Int
+  age_month   Int
+  description String?
 
   body_weight        Float
   body_height        Float
@@ -83,6 +85,7 @@ model Measurements {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  clinic   Clinic    @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
   children Childrens @relation(fields: [children_id], references: [id], onDelete: Cascade)
 
   @@map("measurements")
@@ -164,8 +167,9 @@ model Clinic {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  village Village   @relation(fields: [village_id], references: [id], onDelete: Cascade)
-  parents Parents[]
+  village      Village        @relation(fields: [village_id], references: [id], onDelete: Cascade)
+  parents      Parents[]
+  measurements Measurements[]
 
   @@map("clinics")
 }
