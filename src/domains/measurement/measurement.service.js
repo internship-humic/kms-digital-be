@@ -150,6 +150,8 @@ class MeasurementService extends BaseService {
       measurementDate,
     });
 
+    const status = calculateRiskStatus(zscores);
+
     return await this.db.measurements.create({
       data: {
         children_id: children.id,
@@ -171,6 +173,15 @@ class MeasurementService extends BaseService {
         zscore_lk: zscore.zscore_lk,
 
         zscore_gizi: zscore.zscore_gizi,
+      },
+    });
+
+    await tx.childrens.update({
+      where: {
+        id: children.id,
+      },
+      data: {
+        status,
       },
     });
   }
@@ -201,6 +212,8 @@ class MeasurementService extends BaseService {
       measurementDate,
     });
 
+    const status = calculateRiskStatus(zscores);
+
     return await this.db.measurements.update({
       where: {
         id: measurementId,
@@ -225,18 +238,61 @@ class MeasurementService extends BaseService {
         zscore_gizi: zscore.zscore_gizi,
       },
     });
+
+    await tx.childrens.update({
+      where: {
+        id: children.id,
+      },
+      data: {
+        status,
+      },
+    });
   }
 
   async deleteMeasurement(id) {
-    await this.findMeasurement(id);
+    return await this.db.$transaction(async (tx) => {
+      const measurement = await tx.measurements.findUnique({
+        where: {
+          id,
+        },
+      });
 
-    await this.db.measurements.delete({
-      where: {
-        id,
-      },
+      if (!measurement) {
+        throw this.error.notFound("Measurement not found");
+      }
+
+      await tx.measurements.delete({
+        where: {
+          id,
+        },
+      });
+
+      const latestMeasurement = await tx.measurements.findFirst({
+        where: {
+          children_id: measurement.children_id,
+        },
+        orderBy: {
+          measurement_date: "desc",
+        },
+      });
+
+      await tx.childrens.update({
+        where: {
+          id: measurement.children_id,
+        },
+        data: {
+          status: latestMeasurement
+            ? calculateRiskStatus({
+                zscore_bb: latestMeasurement.zscore_bb,
+                zscore_tb: latestMeasurement.zscore_tb,
+                zscore_gizi: latestMeasurement.zscore_gizi,
+              })
+            : null,
+        },
+      });
+
+      return true;
     });
-
-    return true;
   }
 
   async findChildren(childrenId) {
