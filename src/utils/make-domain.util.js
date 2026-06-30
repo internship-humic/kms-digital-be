@@ -80,7 +80,7 @@ import { ${schemaName(domainName)}Schema } from "./${domainName}.schema.js";
 
 class ${className(domainName)}Routes extends BaseRoutes {
   constructor() {
-    super(${className(domainName)}Controller);
+    super(\`/\${domainName}\`, ${className(domainName)}Controller);
     // this.router = Router();
     // this.auth = AuthMiddleware;
     // this.validate = Validate;
@@ -91,18 +91,24 @@ class ${className(domainName)}Routes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/:id", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
-      this.errCatch(this.controller.someMethod.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      summary: "Get ${className(domainName)} by ID",
+      handler: this.controller.someMethod,
+    });
 
-    this.router.post("/", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
-      this.validate(${schemaName(domainName)}Schema),
-      this.errCatch(this.controller.someMethod.bind(this.controller)),
-    ]);
+    this.register({
+      method: "post",
+      path: "/",
+      auth: true,
+      roles: [this.roles.Admin],
+      schema: ${schemaName(domainName)}Schema,
+      summary: "Create ${className(domainName)}",
+      handler: this.controller.someMethod,
+    });
   }
 }
 

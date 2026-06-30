@@ -5,7 +5,7 @@ import { measurementSchema } from "./measurement.schema.js";
 
 class MeasurementRoutes extends BaseRoutes {
   constructor() {
-    super(MeasurementController);
+    super("/measurement", MeasurementController);
     // this.router = Router();
     // this.auth = AuthMiddleware;
     // this.validate = Validate;
@@ -16,40 +16,58 @@ class MeasurementRoutes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/", [
-      this.auth.authenticate,
-      this.errCatch(this.controller.getMeasurements.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/",
+      auth: true,
+      summary: "Get Measurements",
+      handler: this.controller.getMeasurements,
+    });
 
-    this.router.get("/graph/:childrenId", [
-      this.auth.authenticate,
-      this.errCatch(this.controller.getMeasurementGraph.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/graph/:childrenId",
+      auth: true,
+      summary: "Get Measurement Graph for Child",
+      handler: this.controller.getMeasurementGraph,
+    });
 
-    this.router.get("/:id", [
-      this.auth.authenticate,
-      this.errCatch(this.controller.getMeasurementById.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/:id",
+      auth: true,
+      summary: "Get Measurement by ID",
+      handler: this.controller.getMeasurementById,
+    });
 
-    this.router.post("/", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.validate(measurementSchema),
-      this.errCatch(this.controller.createMeasurement.bind(this.controller)),
-    ]);
+    this.register({
+      method: "post",
+      path: "/",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      schema: measurementSchema,
+      summary: "Create Measurement",
+      handler: this.controller.createMeasurement,
+    });
 
-    this.router.put("/:id", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.validate(measurementSchema),
-      this.errCatch(this.controller.updateMeasurement.bind(this.controller)),
-    ]);
+    this.register({
+      method: "put",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      schema: measurementSchema,
+      summary: "Update Measurement by ID",
+      handler: this.controller.updateMeasurement,
+    });
 
-    this.router.delete("/:id", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.errCatch(this.controller.deleteMeasurement.bind(this.controller)),
-    ]);
+    this.register({
+      method: "delete",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Delete Measurement by ID",
+      handler: this.controller.deleteMeasurement,
+    });
   }
 }
 

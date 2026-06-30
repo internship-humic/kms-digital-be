@@ -3,7 +3,7 @@ import BaseRoutes from "../../common/base_classes/base-routes.js";
 
 class RegionRoutes extends BaseRoutes {
   constructor() {
-    super(RegionController);
+    super("/region", RegionController);
     //this.router = Router();
     //this.auth = AuthMiddleware;
     //this.validate = Validate;
@@ -14,18 +14,30 @@ class RegionRoutes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/province", [
-      this.errCatch(this.controller.getProvinces.bind(this.controller)),
-    ]);
-    this.router.get("/regency/:provinceId", [
-      this.errCatch(this.controller.getRegencies.bind(this.controller)),
-    ]);
-    this.router.get("/district/:regencyId", [
-      this.errCatch(this.controller.getDistricts.bind(this.controller)),
-    ]);
-    this.router.get("/village/:districtId", [
-      this.errCatch(this.controller.getVillages.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/province",
+      summary: "Get Provinces",
+      handler: this.controller.getProvinces,
+    });
+    this.register({
+      method: "get",
+      path: "/regency/:provinceId",
+      summary: "Get Regencies by Province ID",
+      handler: this.controller.getRegencies,
+    });
+    this.register({
+      method: "get",
+      path: "/district/:regencyId",
+      summary: "Get Districts by Regency ID",
+      handler: this.controller.getDistricts,
+    });
+    this.register({
+      method: "get",
+      path: "/village/:districtId",
+      summary: "Get Villages by District ID",
+      handler: this.controller.getVillages,
+    });
   }
 }
 

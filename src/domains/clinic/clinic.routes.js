@@ -4,7 +4,7 @@ import { clinicSchema } from "./clinic.schema.js";
 
 class ClinicRoutes extends BaseRoutes {
   constructor() {
-    super(ClinicController);
+    super("/clinic", ClinicController);
     //this.router = Router();
     //this.auth = AuthMiddleware;
     //this.validate = Validate;
@@ -15,9 +15,12 @@ class ClinicRoutes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/:villageId", [
-      this.errCatch(this.controller.getClinicsByVillage.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/:villageId",
+      summary: "Get Clinics by Village ID",
+      handler: this.controller.getClinicsByVillage,
+    });
   }
 }
 

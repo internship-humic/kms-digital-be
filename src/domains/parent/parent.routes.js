@@ -4,7 +4,7 @@ import { parentSchema } from "./parent.schema.js";
 
 class ParentRoutes extends BaseRoutes {
   constructor() {
-    super(ParentController);
+    super("/parent", ParentController);
     // this.router = Router();
     // this.auth = AuthMiddleware;
     // this.validate = Validate;
@@ -15,19 +15,23 @@ class ParentRoutes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Admin]),
-      this.errCatch(this.controller.getAllParents.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/",
+      auth: true,
+      roles: [this.roles.Admin],
+      summary: "Get All Parents",
+      handler: this.controller.getAllParents,
+    });
 
-    this.router.get("/:clinicId", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.errCatch(
-        this.controller.getAllParentsByClinic.bind(this.controller),
-      ),
-    ]);
+    this.register({
+      method: "get",
+      path: "/:clinicId",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Get All Parents by Clinic ID",
+      handler: this.controller.getAllParentsByClinic,
+    });
   }
 }
 

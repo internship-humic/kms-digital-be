@@ -4,7 +4,7 @@ import { childrenSchema } from "./children.schema.js";
 
 class ChildrenRoutes extends BaseRoutes {
   constructor() {
-    super(ChildrenController);
+    super("/children", ChildrenController);
     // this.router = Router();
     // this.auth = AuthMiddleware;
     // this.validate = Validate;
@@ -15,36 +15,51 @@ class ChildrenRoutes extends BaseRoutes {
   }
 
   routes() {
-    this.router.get("/", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.errCatch(this.controller.getAllChildrens.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Get All Children",
+      handler: this.controller.getAllChildrens,
+    });
 
-    this.router.get("/:parentId", [
-      this.auth.authenticate,
-      this.errCatch(this.controller.getChildrensByParent.bind(this.controller)),
-    ]);
+    this.register({
+      method: "get",
+      path: "/:parentId",
+      auth: true,
+      summary: "Get Children by Parent ID",
+      handler: this.controller.getChildrensByParent,
+    });
 
-    this.router.post("/", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.validate(childrenSchema),
-      this.errCatch(this.controller.createChildren.bind(this.controller)),
-    ]);
+    this.register({
+      method: "post",
+      path: "/",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      schema: childrenSchema,
+      summary: "Create Child",
+      handler: this.controller.createChildren,
+    });
 
-    this.router.put("/:id", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.validate(childrenSchema),
-      this.errCatch(this.controller.updateChildren.bind(this.controller)),
-    ]);
+    this.register({
+      method: "put",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      schema: childrenSchema,
+      summary: "Update Child by ID",
+      handler: this.controller.updateChildren,
+    });
 
-    this.router.delete("/:id", [
-      this.auth.authenticate,
-      this.auth.role([this.roles.Cadre, this.roles.Admin]),
-      this.errCatch(this.controller.deleteChildren.bind(this.controller)),
-    ]);
+    this.register({
+      method: "delete",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Delete Child by ID",
+      handler: this.controller.deleteChildren,
+    });
   }
 }
 

@@ -7,6 +7,7 @@ import BaseError from "./common/base_classes/base-error.js";
 import logger from "./utils/logger.util.js";
 import path from "path";
 import http from "http";
+import setupSwagger from "./common/docs/swagger.js";
 
 class ExpressApplication {
   constructor(port) {
@@ -36,6 +37,8 @@ class ExpressApplication {
     });
 
     this.app.use(router);
+
+    setupSwagger(this.app);
 
     this.app.use("*splat", (req, res, next) => {
       logger.error(`Route not found: ${req.originalUrl}`);
