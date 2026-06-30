@@ -44,6 +44,7 @@ class MeasurementService extends BaseService {
             name: true,
             birth_date: true,
             gender: true,
+            status: true,
           },
         },
       },
