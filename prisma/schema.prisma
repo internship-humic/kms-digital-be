@@ -96,8 +96,11 @@ model Cadre {
   name       String
   email      String   @unique
   password   String
+  clinic_id  String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
 
   @@map("cadres")
 }
@@ -170,6 +173,7 @@ model Clinic {
   village      Village        @relation(fields: [village_id], references: [id], onDelete: Cascade)
   parents      Parents[]
   measurements Measurements[]
+  Cadre        Cadre[]
 
   @@map("clinics")
 }

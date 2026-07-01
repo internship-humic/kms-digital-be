@@ -23,7 +23,7 @@ function generateOpenAPI() {
   const routes = ApiRegistry.getRoutes();
 
   for (const route of routes) {
-    const { method, path, summary, schema, tag } = route;
+    const { method, path, summary, schema, tag, auth } = route;
 
     const swaggerPath = path.replace(/:([a-zA-Z0-9_]+)/g, "{$1}");
 
@@ -41,6 +41,14 @@ function generateOpenAPI() {
       description: docs.description || "",
       responses: {},
     };
+
+    if (auth) {
+      operation.security = [
+        {
+          bearerAuth: [],
+        },
+      ];
+    }
 
     if (schema && ["post", "put", "patch"].includes(method.toLowerCase())) {
       const { swagger } = j2s(schema);
@@ -83,25 +91,23 @@ function generateOpenAPI() {
       },
     ],
 
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+
     tags: [
-      {
-        name: "auth",
-      },
-      {
-        name: "children",
-      },
-      {
-        name: "parent",
-      },
-      {
-        name: "clinic",
-      },
-      {
-        name: "measurement",
-      },
-      {
-        name: "region",
-      },
+      { name: "auth" },
+      { name: "children" },
+      { name: "parent" },
+      { name: "clinic" },
+      { name: "measurement" },
+      { name: "region" },
     ],
 
     paths,

@@ -53,6 +53,8 @@ class BaseRoutes {
       summary,
       schema,
       tag: this.basePath.replace("/", ""),
+      auth,
+      roles,
     });
   }
 

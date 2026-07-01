@@ -22,12 +22,12 @@ const registerSchema = Joi.object({
   password: Joi.string()
     .required()
     .min(8)
-    .pattern(/^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
+    .pattern(/^(?=.*[A-Z]).{8,}$/)
     .messages({
       "string.empty": "Password is required.",
       "string.min": "Password must be at least 8 characters long.",
       "string.pattern.base":
-        "Password must be at least 8 characters, contain at least 1 uppercase letter, and 1 special character.",
+        "Password must contain at least 1 uppercase letter.",
     }),
   password_confirmation: Joi.string()
     .required()
@@ -73,6 +73,9 @@ const activationSchema = Joi.object({
       "string.empty": "Password confirmation is required.",
       "any.only": "Password confirmation does not match password.",
     }),
+  clinic_id: Joi.string().required().messages({
+    "string.empty": "Clinic ID is required.",
+  }),
 });
 
 export { loginSchema, registerSchema, activationSchema };

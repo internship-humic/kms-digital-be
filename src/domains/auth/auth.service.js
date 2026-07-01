@@ -20,7 +20,18 @@ class AuthService extends BaseService {
     let role = Roles.Parents;
 
     if (!user) {
-      user = await this.db.cadre.findUnique({ where: { email } });
+      user = await this.db.cadre.findUnique({
+        where: { email },
+        include: {
+          clinic: {
+            select: {
+              id: true,
+              name: true,
+              address: true,
+            },
+          },
+        },
+      });
       role = Roles.Cadre;
     }
 
@@ -34,10 +45,24 @@ class AuthService extends BaseService {
     const isMatch = await matchPassword(password, user.password);
     if (!isMatch) throw this.error.unauthorized("Invalid password");
 
-    const accessToken = generateToken({ id: user.id, role });
-    delete user.password;
+    const accessToken = generateToken({
+      id: user.id,
+      role,
+      clinic_id: user.clinic_id ?? null,
+    });
 
-    return { user, role, accessToken };
+    const responseUser = { ...user };
+    delete responseUser.password;
+
+    if (role === Roles.Cadre) {
+      responseUser.clinic_id = user.clinic_id;
+    }
+
+    if (role === Roles.Parents) {
+      responseUser.clinic_id = user.clinic_id;
+    }
+
+    return { user: responseUser, role, accessToken };
   }
 
   async register(info) {
@@ -70,7 +95,7 @@ class AuthService extends BaseService {
   }
 
   async activateCadre(info) {
-    const { name, email, password } = info;
+    const { name, email, password, clinic_id } = info;
 
     const existingCadre = await this.db.cadre.findUnique({ where: { email } });
     if (existingCadre)
@@ -87,6 +112,7 @@ class AuthService extends BaseService {
         name,
         email,
         password: await hashPassword(password),
+        clinic_id,
       },
     });
 
