@@ -12,67 +12,71 @@ class AuthController extends BaseController {
   async login(req, res) {
     const info = req.body;
 
-    const result = await this.service.login(info);
+    const data = await this.service.login(info);
 
-    return res.success(result, "Login successful");
+    return this.response.success(res, data, "Login successful");
   }
 
   async register(req, res) {
     const info = req.body;
 
-    const result = await this.service.register(info);
+    const data = await this.service.register(info);
 
-    return res.created(result, "Register successful");
+    return this.response.created(res, data, "Register successful");
   }
 
   async activateCadre(req, res) {
     const info = req.body;
 
-    const result = await this.service.activateCadre(info);
+    const data = await this.service.activateCadre(info);
 
-    return res.created(result, "Cadre activated successfully");
+    return this.response.created(res, data, "Cadre activated successfully");
   }
 
   async getMe(req, res) {
     const user = req.user;
 
-    const result = await this.service.getMe(user);
+    const data = await this.service.getMe(user);
 
-    return res.success(result, "Profile retrieved successfully");
+    return this.response.success(res, data, "Profile retrieved successfully");
   }
 
   async updateProfile(req, res) {
     const info = req.body;
     const user = req.user;
 
-    const result = await this.service.updateProfile(info, user);
+    const data = await this.service.updateProfile(info, user);
 
-    return res.success(result, "Profile updated successfully");
+    return this.response.success(res, data, "Profile updated successfully");
   }
 
   async changePassword(req, res) {
     const info = req.body;
     const user = req.user;
 
-    const result = await this.service.changePassword(info, user);
+    const data = await this.service.changePassword(info, user);
 
-    return res.success(result, "Password changed successfully");
+    return this.response.success(res, data, "Password changed successfully");
   }
 
   async requestPasswordReset(req, res) {
     const info = req.body;
 
-    const result = await this.service.requestPasswordReset(info);
+    const data = await this.service.requestPasswordReset(info);
 
-    return res.success(result, "Password reset email sent successfully");
+    return this.response.success(
+      res,
+      data,
+      "Password reset email sent successfully",
+    );
   }
 
   async resetPassword(req, res) {
     const info = req.body;
 
-    const result = await this.service.resetPassword(info);
+    const data = await this.service.resetPassword(info);
 
-    return res.success(result, "Password reset successfully");
+    return this.response.success(res, data, "Password reset successfully");
   }
 }
 
