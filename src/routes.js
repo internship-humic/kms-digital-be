@@ -5,7 +5,9 @@ import childrenRoutes from "./domains/children/children.routes.js";
 import parentRoutes from "./domains/parent/parent.routes.js";
 import measurementRoutes from "./domains/measurement/measurement.routes.js";
 import cadreRoutes from "./domains/cadre/cadre.routes.js";
+import articleRoutes from "./domains/article/article.routes.js";
 const routes = [
+  { path: "/article", route: articleRoutes },
   { path: "/cadre", route: cadreRoutes },
   { path: "/measurement", route: measurementRoutes },
   { path: "/parent", route: parentRoutes },

@@ -7,14 +7,18 @@ import clinicDocs from "./modules/clinic.docs.js";
 import measurementDocs from "./modules/measurement.docs.js";
 import parentDocs from "./modules/parent.docs.js";
 import regionDocs from "./modules/region.docs.js";
+import cadreDocs from "./modules/cadre.docs.js";
+import articleDocs from "./modules/article.docs.js";
 
 const endpointDocs = {
+  ...articleDocs,
   ...authDocs,
   ...childrenDocs,
   ...clinicDocs,
   ...measurementDocs,
   ...parentDocs,
   ...regionDocs,
+  ...cadreDocs,
 };
 
 function generateOpenAPI() {
@@ -36,7 +40,7 @@ function generateOpenAPI() {
     const docs = endpointDocs[key] || {};
 
     const operation = {
-      tags: [tag],
+      tags: [{ name: "article" }, tag],
       summary: docs.summary || summary,
       description: docs.description || "",
       responses: {},

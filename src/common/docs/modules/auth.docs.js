@@ -78,4 +78,72 @@ export default {
       },
     },
   },
+
+  "PATCH /auth/profile": {
+    summary: "Update Current User Profile",
+
+    request: {
+      name: "John Doe",
+      email: "john@example.com",
+      address: "Jl. Mawar No. 12",
+      phone_number: "08123456789",
+      clinic_id: "clinic-uuid",
+    },
+
+    response: {
+      user: {
+        id: "user-uuid",
+        name: "John Doe",
+        email: "john@example.com",
+        address: "Jl. Mawar No. 12",
+        phone_number: "08123456789",
+        clinic: {
+          id: "clinic-uuid",
+          name: "Posyandu Melati",
+          address: "Jl. Melati",
+        },
+      },
+      role: "Parents",
+    },
+  },
+
+  "PATCH /auth/change-password": {
+    summary: "Change Password",
+
+    request: {
+      current_password: "OldPassword123",
+      new_password: "NewPassword123",
+      password_confirmation: "NewPassword123",
+    },
+
+    response: {
+      updated: true,
+    },
+  },
+
+  "POST /auth/forgot-password": {
+    summary: "Request Password Reset",
+
+    request: {
+      email: "john@example.com",
+    },
+
+    response: {
+      sent: true,
+    },
+  },
+
+  "POST /auth/reset-password": {
+    summary: "Reset Password",
+
+    request: {
+      token: "jwt-reset-token",
+      new_password: "NewPassword123",
+      password_confirmation: "NewPassword123",
+    },
+
+    response: {
+      updated: true,
+    },
+  },
 };

@@ -24,6 +24,15 @@ program
 
     const domainName = domainParts.at(-1);
 
+    const docsPath = path.join(
+      ROOT,
+      "src",
+      "common",
+      "docs",
+      "modules",
+      `${domainName}.docs.js`,
+    );
+
     const className = (value) => {
       return value
         .split(/[-_ ]+/)
@@ -125,6 +134,37 @@ const ${schemaName(domainName)}Schema = Joi.object({
 export { ${schemaName(domainName)}Schema };
 `;
 
+    const docsTemplate = `
+export default {
+  "GET /${domainName}": {
+    summary: "Get All ${className(domainName)}",
+    response: {},
+  },
+
+  "GET /${domainName}/:id": {
+    summary: "Get ${className(domainName)} By Id",
+    response: {},
+  },
+
+  "POST /${domainName}": {
+    summary: "Create ${className(domainName)}",
+    request: {},
+    response: {},
+  },
+
+  "PATCH /${domainName}/:id": {
+    summary: "Update ${className(domainName)}",
+    request: {},
+    response: {},
+  },
+
+  "DELETE /${domainName}/:id": {
+    summary: "Delete ${className(domainName)}",
+    response: true,
+  },
+};
+`;
+
     fs.writeFileSync(
       path.join(domainPath, `${domainName}.controller.js`),
       controllerTemplate,
@@ -144,6 +184,8 @@ export { ${schemaName(domainName)}Schema };
       path.join(domainPath, `${domainName}.schema.js`),
       schemaTemplate,
     );
+
+    fs.writeFileSync(docsPath, docsTemplate);
 
     const routesFile = path.join(ROOT, "src", "routes.js");
 
@@ -175,6 +217,40 @@ export { ${schemaName(domainName)}Schema };
       }
 
       fs.writeFileSync(routesFile, routesContent);
+    }
+
+    const openApiFile = path.join(ROOT, "src", "common", "docs", "openapi.js");
+
+    if (fs.existsSync(openApiFile)) {
+      let content = fs.readFileSync(openApiFile, "utf8");
+
+      const importLine = `import ${domainName}Docs from "./modules/${domainName}.docs.js";`;
+
+      if (!content.includes(importLine)) {
+        const endpointIndex = content.indexOf("const endpointDocs");
+
+        content =
+          content.slice(0, endpointIndex) +
+          `${importLine}\n` +
+          content.slice(endpointIndex);
+      }
+
+      if (!content.includes(`...${domainName}Docs`)) {
+        content = content.replace(
+          /const endpointDocs = \{/,
+          `const endpointDocs = {\n  ...${domainName}Docs,`,
+        );
+      }
+
+      // tags
+      if (!content.includes(`{ name: "${domainName}" }`)) {
+        content = content.replace(
+          /tags:\s*\[/,
+          `tags: [\n      { name: "${domainName}" },`,
+        );
+      }
+
+      fs.writeFileSync(openApiFile, content);
     }
 
     logger.info(`Domain '${name}' created successfully!`);
