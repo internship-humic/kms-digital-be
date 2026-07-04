@@ -2,6 +2,30 @@ export default {
   "GET /children/": {
     summary: "Get All Children",
     description: "Retrieve a paginated list of all children records (Admin and Cadre only)",
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter children by name",
+        example: "Ahmad",
+      },
+      name: {
+        type: "string",
+        description: "Filter by exact name match (case-insensitive)",
+        example: "Ahmad",
+      },
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -33,6 +57,11 @@ export default {
   "GET /children/:parentId": {
     summary: "Get Children by Parent ID",
     description: "Retrieve a list of children records associated with a specific parent ID",
+
+    params: {
+      parentId: "uuid-parent-1",
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -86,6 +115,11 @@ export default {
   "PUT /children/:id": {
     summary: "Update Child Profile",
     description: "Update the profile details of an existing child record by ID",
+
+    params: {
+      id: "uuid-child-1",
+    },
+
     request: {
       name: "Ahmad Updated",
       birth_date: "2025-01-01",
@@ -114,6 +148,11 @@ export default {
   "DELETE /children/:id": {
     summary: "Delete Child Profile",
     description: "Remove a child profile and all associated measurements from the database",
+
+    params: {
+      id: "uuid-child-1",
+    },
+
     response: {
       success: true,
       status: "OK",

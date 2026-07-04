@@ -7,6 +7,11 @@ export default {
 
   "GET /article/:id": {
     summary: "Get Article By Id",
+
+    params: {
+      id: "article-uuid",
+    },
+
     response: {},
   },
 
@@ -18,12 +23,22 @@ export default {
 
   "PATCH /article/:id": {
     summary: "Update Article",
+
+    params: {
+      id: "article-uuid",
+    },
+
     request: {},
     response: {},
   },
 
   "DELETE /article/:id": {
     summary: "Delete Article",
+
+    params: {
+      id: "article-uuid",
+    },
+
     response: true,
   },
 };

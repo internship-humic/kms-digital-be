@@ -237,17 +237,24 @@ export default {
 
       if (!content.includes(`...${domainName}Docs`)) {
         content = content.replace(
-          /const endpointDocs = \{/,
+          "const endpointDocs = {",
           `const endpointDocs = {\n  ...${domainName}Docs,`,
         );
       }
 
-      // tags
-      if (!content.includes(`{ name: "${domainName}" }`)) {
-        content = content.replace(
-          /tags:\s*\[/,
-          `tags: [\n      { name: "${domainName}" },`,
-        );
+      const tagLine = `{ name: "${domainName}" },`;
+
+      if (!content.includes(tagLine)) {
+        const tagsIndex = content.lastIndexOf("tags: [");
+
+        if (tagsIndex !== -1) {
+          const insertIndex = content.indexOf("\n", tagsIndex) + 1;
+
+          content =
+            content.slice(0, insertIndex) +
+            `      ${tagLine}\n` +
+            content.slice(insertIndex);
+        }
       }
 
       fs.writeFileSync(openApiFile, content);

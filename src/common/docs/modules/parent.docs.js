@@ -2,6 +2,30 @@ export default {
   "GET /parent/": {
     summary: "Get All Parents",
     description: "Retrieve a paginated list of all parents registered in the system (Admin only)",
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter parents by name",
+        example: "Jane",
+      },
+      name: {
+        type: "string",
+        description: "Filter by exact name match (case-insensitive)",
+        example: "Jane Doe",
+      },
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -29,6 +53,34 @@ export default {
   "GET /parent/:clinicId": {
     summary: "Get Parents by Clinic ID",
     description: "Retrieve a paginated list of all parents registered under a specific clinic (Admin and Cadre only)",
+
+    params: {
+      clinicId: "uuid-clinic-1",
+    },
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter parents by name",
+        example: "Jane",
+      },
+      name: {
+        type: "string",
+        description: "Filter by exact name match (case-insensitive)",
+        example: "Jane Doe",
+      },
+    },
+
     response: {
       success: true,
       status: "OK",

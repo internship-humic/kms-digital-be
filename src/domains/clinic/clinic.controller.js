@@ -26,7 +26,7 @@ class ClinicController extends BaseController {
 
     const result = await this.service.getAllClinics(query);
 
-    return this.success(
+    return this.response.success(
       res,
       result.data,
       "Clinics retrieved successfully",
@@ -39,7 +39,7 @@ class ClinicController extends BaseController {
 
     const result = await this.service.getClinicById(id);
 
-    return this.success(res, result, "Clinic retrieved successfully");
+    return this.response.success(res, result, "Clinic retrieved successfully");
   }
 
   async createClinic(req, res) {
@@ -47,7 +47,7 @@ class ClinicController extends BaseController {
 
     const result = await this.service.createClinic(info);
 
-    return this.created(res, result, "Clinic created successfully");
+    return this.response.created(res, result, "Clinic created successfully");
   }
 
   async updateClinic(req, res) {
@@ -56,7 +56,7 @@ class ClinicController extends BaseController {
 
     const result = await this.service.updateClinic(id, info);
 
-    return this.success(res, result, "Clinic updated successfully");
+    return this.response.success(res, result, "Clinic updated successfully");
   }
 
   async deleteClinic(req, res) {
@@ -64,7 +64,7 @@ class ClinicController extends BaseController {
 
     await this.service.deleteClinic(id);
 
-    return this.success(res, true, "Clinic deleted successfully");
+    return this.response.success(res, true, "Clinic deleted successfully");
   }
 }
 

@@ -8,8 +8,8 @@ import measurementDocs from "./modules/measurement.docs.js";
 import parentDocs from "./modules/parent.docs.js";
 import regionDocs from "./modules/region.docs.js";
 import cadreDocs from "./modules/cadre.docs.js";
-import articleDocs from "./modules/article.docs.js";
 
+import articleDocs from "./modules/article.docs.js";
 const endpointDocs = {
   ...articleDocs,
   ...authDocs,
@@ -40,7 +40,7 @@ function generateOpenAPI() {
     const docs = endpointDocs[key] || {};
 
     const operation = {
-      tags: [{ name: "article" }, tag],
+      tags: [tag],
       summary: docs.summary || summary,
       description: docs.description || "",
       responses: {},
@@ -77,6 +77,44 @@ function generateOpenAPI() {
       },
     };
 
+    const parameters = [];
+
+    if (docs.params) {
+      parameters.push(
+        ...Object.entries(docs.params).map(([name, example]) => ({
+          name,
+          in: "path",
+          required: true,
+          schema: {
+            type: "string",
+          },
+          example,
+        })),
+      );
+    }
+
+    if (docs.query) {
+      parameters.push(
+        ...Object.entries(docs.query).map(([name, config]) => {
+          const isObject = typeof config === "object" && config !== null;
+          return {
+            name,
+            in: "query",
+            required: isObject ? config.required || false : false,
+            description: isObject ? config.description || "" : "",
+            schema: {
+              type: isObject ? config.type || "string" : "string",
+            },
+            example: isObject ? config.example : config,
+          };
+        }),
+      );
+    }
+
+    if (parameters.length > 0) {
+      operation.parameters = parameters;
+    }
+
     paths[swaggerPath][method.toLowerCase()] = operation;
   }
 
@@ -84,7 +122,7 @@ function generateOpenAPI() {
     openapi: "3.0.3",
 
     info: {
-      title: "Posyandu API",
+      title: "Jagacilik API",
       version: "1.0.0",
       description: "REST API Documentation",
     },
@@ -106,12 +144,14 @@ function generateOpenAPI() {
     },
 
     tags: [
+      { name: "article" },
       { name: "auth" },
       { name: "children" },
       { name: "parent" },
       { name: "clinic" },
       { name: "measurement" },
       { name: "region" },
+      { name: "cadre" },
     ],
 
     paths,

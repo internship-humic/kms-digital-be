@@ -2,6 +2,35 @@ export default {
   "GET /measurement/": {
     summary: "Get All Measurements",
     description: "Retrieve a paginated list of all children measurements",
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      childrenId: {
+        type: "string",
+        description: "Filter measurements by children ID",
+        example: "uuid-child-1",
+      },
+      startDate: {
+        type: "string",
+        description: "Filter measurements from this date (ISO format: YYYY-MM-DD)",
+        example: "2026-01-01",
+      },
+      endDate: {
+        type: "string",
+        description: "Filter measurements until this date (ISO format: YYYY-MM-DD)",
+        example: "2026-12-31",
+      },
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -36,6 +65,11 @@ export default {
   "GET /measurement/graph/:childrenId": {
     summary: "Get Measurement Graph Data",
     description: "Retrieve history measurements of a child for graph visualization",
+
+    params: {
+      childrenId: "uuid-child-1",
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -57,6 +91,11 @@ export default {
   "GET /measurement/:id": {
     summary: "Get Measurement by ID",
     description: "Retrieve details of a single measurement record by ID",
+
+    params: {
+      id: "uuid-measurement-1",
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -122,6 +161,11 @@ export default {
   "PUT /measurement/:id": {
     summary: "Update Measurement",
     description: "Update details of an existing measurement record and recalculate its z-scores",
+
+    params: {
+      id: "uuid-measurement-1",
+    },
+
     request: {
       children_id: "uuid-child-1",
       clinic_id: "uuid-clinic-1",
@@ -159,6 +203,11 @@ export default {
   "DELETE /measurement/:id": {
     summary: "Delete Measurement",
     description: "Delete an existing measurement record by ID",
+
+    params: {
+      id: "uuid-measurement-1",
+    },
+
     response: {
       success: true,
       status: "OK",

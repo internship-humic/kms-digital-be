@@ -14,7 +14,7 @@ class CadreController extends BaseController {
 
     const result = await this.service.getAllCadres(query);
 
-    return this.success(
+    return this.response.success(
       res,
       result.data,
       "Cadres retrieved successfully",
@@ -26,9 +26,9 @@ class CadreController extends BaseController {
     const { id } = req.params;
     const info = req.body;
 
-    const result = await this.service.updateCadre(id, info);
+    const data = await this.service.updateCadre(id, info);
 
-    return this.success(res, result, "Cadre updated successfully");
+    return this.response.success(res, data, "Cadre updated successfully");
   }
 
   async deleteCadre(req, res) {
@@ -36,7 +36,7 @@ class CadreController extends BaseController {
 
     await this.service.deleteCadre(id);
 
-    return this.success(res, true, "Cadre deleted successfully");
+    return this.response.success(res, true, "Cadre deleted successfully");
   }
 }
 

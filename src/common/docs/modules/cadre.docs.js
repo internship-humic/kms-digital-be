@@ -2,6 +2,29 @@ export default {
   "GET /cadre": {
     summary: "Get All Cadres",
 
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter cadres by name",
+        example: "Siti",
+      },
+      name: {
+        type: "string",
+        description: "Filter by exact name match (case-insensitive)",
+        example: "Siti Aminah",
+      },
+    },
+
     response: {
       data: [
         {
@@ -21,6 +44,10 @@ export default {
 
   "PATCH /cadre/:id": {
     summary: "Update Cadre",
+
+    params: {
+      id: "cadre-uuid",
+    },
 
     request: {
       name: "Siti Nurhaliza",
@@ -43,6 +70,10 @@ export default {
 
   "DELETE /cadre/:id": {
     summary: "Delete Cadre",
+
+    params: {
+      id: "cadre-uuid",
+    },
 
     response: true,
   },

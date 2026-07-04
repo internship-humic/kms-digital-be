@@ -2,6 +2,11 @@ export default {
   "GET /clinic/village/:villageId": {
     summary: "Get Clinics by Village ID",
     description: "Retrieve all clinics registered within a specific village ID",
+
+    params: {
+      villageId: "uuid-village-1",
+    },
+
     response: {
       success: true,
       status: "OK",
@@ -22,6 +27,30 @@ export default {
 
   "GET /clinic": {
     summary: "Get All Clinics",
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter clinics by name",
+        example: "Melati",
+      },
+      name: {
+        type: "string",
+        description: "Filter by exact name match (case-insensitive)",
+        example: "Posyandu Melati",
+      },
+    },
+
     response: {
       data: [
         {
@@ -43,6 +72,11 @@ export default {
 
   "GET /clinic/:id": {
     summary: "Get Clinic By Id",
+
+    params: {
+      id: "clinic-uuid",
+    },
+
     response: {
       id: "clinic-uuid",
       name: "Posyandu Melati",
@@ -89,6 +123,11 @@ export default {
 
   "PATCH /clinic/:id": {
     summary: "Update Clinic",
+
+    params: {
+      id: "clinic-uuid",
+    },
+
     request: {
       name: "Posyandu Melati Baru",
       address: "Jl. Mawar No.2",
@@ -104,6 +143,11 @@ export default {
 
   "DELETE /clinic/:id": {
     summary: "Delete Clinic",
+
+    params: {
+      id: "clinic-uuid",
+    },
+
     response: true,
   },
 };

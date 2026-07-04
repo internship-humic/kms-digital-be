@@ -59,9 +59,7 @@ class CadreService extends BaseService {
 
   async updateCadre(id, info) {
     const cadre = await this.db.cadre.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!cadre) {
@@ -71,19 +69,13 @@ class CadreService extends BaseService {
     if (info.email) {
       const [parent, admin, existingCadre] = await Promise.all([
         this.db.parents.findUnique({
-          where: {
-            email: info.email,
-          },
+          where: { email: info.email },
         }),
         this.db.admin.findUnique({
-          where: {
-            email: info.email,
-          },
+          where: { email: info.email },
         }),
         this.db.cadre.findUnique({
-          where: {
-            email: info.email,
-          },
+          where: { email: info.email },
         }),
       ]);
 
@@ -102,9 +94,7 @@ class CadreService extends BaseService {
 
     if (info.clinic_id) {
       const clinic = await this.db.clinic.findUnique({
-        where: {
-          id: info.clinic_id,
-        },
+        where: { id: info.clinic_id },
       });
 
       if (!clinic) {
@@ -113,9 +103,7 @@ class CadreService extends BaseService {
     }
 
     const updatedCadre = await this.db.cadre.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: info,
       include: {
         clinic: {
