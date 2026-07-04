@@ -1,11 +1,10 @@
-
 import CadreController from "./cadre.controller.js";
 import BaseRoutes from "../../common/base_classes/base-routes.js";
-import { cadreSchema } from "./cadre.schema.js";
+import { updateCadreSchema } from "./cadre.schema.js";
 
 class CadreRoutes extends BaseRoutes {
   constructor() {
-    super(`/cadre`, CadreController);
+    super("/cadre", CadreController);
     // this.router = Router();
     // this.auth = AuthMiddleware;
     // this.validate = Validate;
@@ -18,21 +17,30 @@ class CadreRoutes extends BaseRoutes {
   routes() {
     this.register({
       method: "get",
-      path: "/:id",
-      auth: true,
-      roles: [this.roles.Admin],
-      summary: "Get Cadre by ID",
-      handler: this.controller.someMethod,
-    });
-
-    this.register({
-      method: "post",
       path: "/",
       auth: true,
       roles: [this.roles.Admin],
-      schema: cadreSchema,
-      summary: "Create Cadre",
-      handler: this.controller.someMethod,
+      summary: "Get All Cadres",
+      handler: this.controller.getAllCadres,
+    });
+
+    this.register({
+      method: "patch",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      schema: updateCadreSchema,
+      summary: "Update Cadre",
+      handler: this.controller.updateCadre,
+    });
+
+    this.register({
+      method: "delete",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      summary: "Delete Cadre",
+      handler: this.controller.deleteCadre,
     });
   }
 }

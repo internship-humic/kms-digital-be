@@ -1,4 +1,3 @@
-
 import CadreService from "./cadre.service.js";
 import BaseController from "../../common/base_classes/base-controller.js";
 
@@ -10,8 +9,34 @@ class CadreController extends BaseController {
     // this.service = CadreService
   }
 
-  async someMethod(req, res) {
-    // implement method logic here
+  async getAllCadres(req, res) {
+    const query = req.query;
+
+    const result = await this.service.getAllCadres(query);
+
+    return this.success(
+      res,
+      result.data,
+      "Cadres retrieved successfully",
+      result.pagination,
+    );
+  }
+
+  async updateCadre(req, res) {
+    const { id } = req.params;
+    const info = req.body;
+
+    const result = await this.service.updateCadre(id, info);
+
+    return this.success(res, result, "Cadre updated successfully");
+  }
+
+  async deleteCadre(req, res) {
+    const { id } = req.params;
+
+    await this.service.deleteCadre(id);
+
+    return this.success(res, true, "Cadre deleted successfully");
   }
 }
 
