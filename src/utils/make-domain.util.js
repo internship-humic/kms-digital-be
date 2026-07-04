@@ -80,7 +80,7 @@ import { ${schemaName(domainName)}Schema } from "./${domainName}.schema.js";
 
 class ${className(domainName)}Routes extends BaseRoutes {
   constructor() {
-    super(\`/\${domainName}\`, ${className(domainName)}Controller);
+    super(\"/${domainName}\", ${className(domainName)}Controller);
     // this.router = Router();
     // this.auth = AuthMiddleware;
     // this.validate = Validate;
