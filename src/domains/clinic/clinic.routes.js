@@ -1,6 +1,6 @@
 import ClinicController from "./clinic.controller.js";
 import BaseRoutes from "../../common/base_classes/base-routes.js";
-import { clinicSchema } from "./clinic.schema.js";
+import { createClinicSchema, updateClinicSchema } from "./clinic.schema.js";
 
 class ClinicRoutes extends BaseRoutes {
   constructor() {
@@ -17,9 +17,54 @@ class ClinicRoutes extends BaseRoutes {
   routes() {
     this.register({
       method: "get",
-      path: "/:villageId",
+      path: "/village/:villageId",
       summary: "Get Clinics by Village ID",
       handler: this.controller.getClinicsByVillage,
+    });
+
+    this.register({
+      method: "get",
+      path: "/",
+      auth: true,
+      summary: "Get All Clinics",
+      handler: this.controller.getAllClinics,
+    });
+
+    this.register({
+      method: "get",
+      path: "/:id",
+      auth: true,
+      summary: "Get Clinic By Id",
+      handler: this.controller.getClinicById,
+    });
+
+    this.register({
+      method: "post",
+      path: "/",
+      auth: true,
+      roles: [this.roles.Admin],
+      schema: createClinicSchema,
+      summary: "Create Clinic",
+      handler: this.controller.createClinic,
+    });
+
+    this.register({
+      method: "patch",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      schema: updateClinicSchema,
+      summary: "Update Clinic",
+      handler: this.controller.updateClinic,
+    });
+
+    this.register({
+      method: "delete",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      summary: "Delete Clinic",
+      handler: this.controller.deleteClinic,
     });
   }
 }
