@@ -40,6 +40,14 @@ class AuthRoutes extends BaseRoutes {
     });
 
     this.register({
+      method: "get",
+      path: "/me",
+      auth: true,
+      summary: "Get Current User Profile",
+      handler: this.controller.getMe,
+    });
+
+    this.register({
       method: "post",
       path: "/activation",
       auth: true,
