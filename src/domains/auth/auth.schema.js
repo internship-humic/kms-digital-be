@@ -78,4 +78,89 @@ const activationSchema = Joi.object({
   }),
 });
 
-export { loginSchema, registerSchema, activationSchema };
+const profileSchema = Joi.object({
+  name: Joi.string().min(4).messages({
+    "string.min": "Name must be at least 4 characters long.",
+  }),
+
+  email: Joi.string().email().messages({
+    "string.email": "Email must be a valid email address.",
+  }),
+
+  address: Joi.string(),
+
+  clinic_id: Joi.string(),
+
+  phone_number: Joi.string(),
+})
+  .min(1)
+  .messages({
+    "object.min": "At least one field must be provided.",
+  });
+
+const changePasswordSchema = Joi.object({
+  current_password: Joi.string().required().messages({
+    "string.empty": "Current password is required.",
+  }),
+
+  new_password: Joi.string()
+    .required()
+    .min(8)
+    .pattern(/^(?=.*[A-Z]).{8,}$/)
+    .messages({
+      "string.empty": "New password is required.",
+      "string.min": "New password must be at least 8 characters long.",
+      "string.pattern.base":
+        "New password must contain at least 1 uppercase letter.",
+    }),
+
+  password_confirmation: Joi.string()
+    .required()
+    .valid(Joi.ref("new_password"))
+    .messages({
+      "string.empty": "Password confirmation is required.",
+      "any.only": "Password confirmation does not match new password.",
+    }),
+});
+
+const forgotPasswordSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.empty": "Email is required.",
+    "string.email": "Email must be a valid email address.",
+  }),
+});
+
+const resetPasswordSchema = Joi.object({
+  token: Joi.string().required().messages({
+    "string.empty": "Reset token is required.",
+  }),
+
+  new_password: Joi.string()
+    .required()
+    .min(8)
+    .pattern(/^(?=.*[A-Z]).{8,}$/)
+    .messages({
+      "string.empty": "New password is required.",
+      "string.min": "New password must be at least 8 characters long.",
+      "string.pattern.base":
+        "New password must contain at least 1 uppercase letter.",
+    }),
+
+  password_confirmation: Joi.string()
+    .required()
+    .valid(Joi.ref("new_password"))
+    .messages({
+      "string.empty": "Password confirmation is required.",
+      "any.only": "Password confirmation does not match new password.",
+    }),
+});
+
+export {
+  loginSchema,
+  registerSchema,
+  activationSchema,
+  profileSchema,
+  changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+};

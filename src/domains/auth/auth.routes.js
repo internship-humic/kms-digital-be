@@ -4,6 +4,10 @@ import {
   loginSchema,
   registerSchema,
   activationSchema,
+  profileSchema,
+  changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "./auth.schema.js";
 
 class AuthRoutes extends BaseRoutes {
@@ -43,6 +47,40 @@ class AuthRoutes extends BaseRoutes {
       schema: activationSchema,
       summary: "Activate Cadre",
       handler: this.controller.activateCadre,
+    });
+
+    this.register({
+      method: "patch",
+      path: "/profile",
+      auth: true,
+      schema: profileSchema,
+      summary: "Update Current User Profile",
+      handler: this.controller.updateProfile,
+    });
+
+    this.register({
+      method: "patch",
+      path: "/change-password",
+      auth: true,
+      schema: changePasswordSchema,
+      summary: "Change Current User Password",
+      handler: this.controller.changePassword,
+    });
+
+    this.register({
+      method: "post",
+      path: "/forgot-password",
+      schema: forgotPasswordSchema,
+      summary: "Request Password Reset",
+      handler: this.controller.requestPasswordReset,
+    });
+
+    this.register({
+      method: "post",
+      path: "/reset-password",
+      schema: resetPasswordSchema,
+      summary: "Reset Password",
+      handler: this.controller.resetPassword,
     });
   }
 }
