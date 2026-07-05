@@ -512,7 +512,7 @@ class AuthService extends BaseService {
         id: payload.id,
       },
       data: {
-        password: await hashPassword(newPassword),
+        password: await hashPassword(new_password),
       },
     });
 

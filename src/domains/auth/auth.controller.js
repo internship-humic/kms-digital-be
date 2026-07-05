@@ -45,7 +45,7 @@ class AuthController extends BaseController {
     const info = req.body;
     const user = req.user;
 
-    const data = await this.service.updateProfile(info, user);
+    const data = await this.service.updateProfile(user, info);
 
     return this.response.success(res, data, "Profile updated successfully");
   }
@@ -54,7 +54,7 @@ class AuthController extends BaseController {
     const info = req.body;
     const user = req.user;
 
-    const data = await this.service.changePassword(info, user);
+    const data = await this.service.changePassword(user, info);
 
     return this.response.success(res, data, "Password changed successfully");
   }
