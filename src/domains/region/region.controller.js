@@ -43,6 +43,18 @@ class RegionController extends BaseController {
 
     return this.response.success(res, data, "Villages retrieved successfully");
   }
+
+  async getCoveredRegions(req, res) {
+    const query = req.query;
+    const data = await this.service.getCoveredRegions(query);
+
+    return this.response.success(
+      res,
+      data.data,
+      "Covered regions retrieved successfully",
+      data.pagination,
+    );
+  }
 }
 
 export default new RegionController();

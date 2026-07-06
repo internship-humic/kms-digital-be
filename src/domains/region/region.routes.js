@@ -38,6 +38,15 @@ class RegionRoutes extends BaseRoutes {
       summary: "Get Villages by District ID",
       handler: this.controller.getVillages,
     });
+
+    this.register({
+      method: "get",
+      auth: true,
+      roles: [this.roles.Admin],
+      path: "/covered",
+      summary: "Get Covered Regions",
+      handler: this.controller.getCoveredRegions,
+    });
   }
 }
 
