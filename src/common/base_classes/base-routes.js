@@ -27,25 +27,28 @@ class BaseRoutes {
     schema = null,
     auth = false,
     roles = [],
+    middlewares = [],
     summary = "",
   }) {
-    const middlewares = [];
+    const handlers = [];
 
     if (auth) {
-      middlewares.push(this.auth.authenticate);
+      handlers.push(this.auth.authenticate);
     }
 
     if (roles.length) {
-      middlewares.push(this.auth.role(roles));
+      handlers.push(this.auth.role(roles));
     }
+
+    handlers.push(...middlewares);
 
     if (schema) {
-      middlewares.push(this.validate(schema));
+      handlers.push(this.validate(schema));
     }
 
-    middlewares.push(this.errCatch(handler.bind(this.controller)));
+    handlers.push(this.errCatch(handler.bind(this.controller)));
 
-    this.router[method](path, middlewares);
+    this.router[method](path, handlers);
 
     ApiRegistry.register({
       method,

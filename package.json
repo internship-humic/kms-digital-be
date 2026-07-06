@@ -17,7 +17,8 @@
     "seed:children": "node src/utils/seeders/children.seeder.js",
     "seed:measurement": "node src/utils/seeders/measurement.seeder.js",
     "seed:cadre": "node src/utils/seeders/cadre.seeder.js",
-    "seed:all": "node src/utils/seeders/region.seeder.js && node src/utils/seeders/clinic.seeder.js && node src/utils/seeders/admin.seeder.js && node src/utils/seeders/parent.seeder.js && node src/utils/seeders/children.seeder.js && node src/utils/seeders/measurement.seeder.js && node src/utils/seeders/cadre.seeder.js",
+    "seed:article": "node src/utils/seeders/article.seeder.js",
+    "seed:all": "node src/utils/seeders/region.seeder.js && node src/utils/seeders/clinic.seeder.js && node src/utils/seeders/admin.seeder.js && node src/utils/seeders/parent.seeder.js && node src/utils/seeders/children.seeder.js && node src/utils/seeders/measurement.seeder.js && node src/utils/seeders/cadre.seeder.js && node src/utils/seeders/article.seeder.js",
     "hit:region": "node src/utils/region.util.js",
     "migrate": "npx prisma migrate dev -n",
     "make:domain": "node src/utils/make-domain.util.js make:domain"
@@ -37,6 +38,7 @@
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.6.0",
     "morgan": "^1.10.1",
+    "multer": "^2.2.0",
     "nodemailer": "^9.0.3",
     "prisma": "^6.19.2",
     "swagger-ui-express": "^5.0.1",

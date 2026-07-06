@@ -18,6 +18,12 @@ enum Childrentatus {
   HIGHRISK
 }
 
+enum ArticleType {
+  ACTIVITY
+  NUTRITION
+  HEALTH
+}
+
 model Admin {
   id         String   @id @default(uuid())
   email      String   @unique
@@ -176,4 +182,20 @@ model Clinic {
   Cadre        Cadre[]
 
   @@map("clinics")
+}
+
+model Article {
+  id              String      @id @default(uuid())
+  title           String
+  description     String
+  content         Json
+  cover_image     String?
+  writer_name     String
+  writer_identity String
+  type            ArticleType
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("articles")
 }

@@ -1,7 +1,8 @@
+import BaseRoutes from "../../common/base_classes/base-routes.js";
+import upload from "../../utils/image.util.js";
 
 import ArticleController from "./article.controller.js";
-import BaseRoutes from "../../common/base_classes/base-routes.js";
-import { articleSchema } from "./article.schema.js";
+import { createArticleSchema, updateArticleSchema } from "./article.schema.js";
 
 class ArticleRoutes extends BaseRoutes {
   constructor() {
@@ -18,11 +19,16 @@ class ArticleRoutes extends BaseRoutes {
   routes() {
     this.register({
       method: "get",
+      path: "/",
+      summary: "Get All Articles",
+      handler: this.controller.getAllArticles,
+    });
+
+    this.register({
+      method: "get",
       path: "/:id",
-      auth: true,
-      roles: [this.roles.Admin],
-      summary: "Get Article by ID",
-      handler: this.controller.someMethod,
+      summary: "Get Article By Id",
+      handler: this.controller.getArticleById,
     });
 
     this.register({
@@ -30,9 +36,62 @@ class ArticleRoutes extends BaseRoutes {
       path: "/",
       auth: true,
       roles: [this.roles.Admin],
-      schema: articleSchema,
+      middlewares: [
+        upload.fields([
+          {
+            name: "cover_image",
+            maxCount: 1,
+          },
+          {
+            name: "content_images",
+            maxCount: 20,
+          },
+        ]),
+      ],
+      schema: createArticleSchema,
       summary: "Create Article",
-      handler: this.controller.someMethod,
+      handler: this.controller.createArticle,
+    });
+
+    this.register({
+      method: "patch",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      middlewares: [
+        upload.fields([
+          {
+            name: "cover_image",
+            maxCount: 1,
+          },
+          {
+            name: "content_images",
+            maxCount: 20,
+          },
+        ]),
+      ],
+      schema: updateArticleSchema,
+      summary: "Update Article",
+      handler: this.controller.updateArticle,
+    });
+
+    this.register({
+      method: "delete",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      summary: "Delete Article",
+      handler: this.controller.deleteArticle,
+    });
+
+    this.register({
+      method: "post",
+      path: "/upload-image",
+      auth: true,
+      roles: [this.roles.Admin],
+      middlewares: [upload.single("image")],
+      summary: "Upload Article Content Image",
+      handler: this.controller.uploadContentImage,
     });
   }
 }
