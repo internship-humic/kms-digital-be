@@ -26,4 +26,10 @@ const childrenSchema = Joi.object({
   head_circumference: Joi.number().min(20).max(60).allow(null).optional(),
 });
 
-export { childrenSchema };
+const interventionSchema = Joi.object({
+  referral: Joi.boolean().optional(),
+  supplement: Joi.boolean().optional(),
+  education: Joi.boolean().optional(),
+}).min(1);
+
+export { childrenSchema, interventionSchema };

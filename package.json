@@ -18,7 +18,7 @@
     "seed:measurement": "node src/utils/seeders/measurement.seeder.js",
     "seed:cadre": "node src/utils/seeders/cadre.seeder.js",
     "seed:article": "node src/utils/seeders/article.seeder.js",
-    "seed:all": "node src/utils/seeders/region.seeder.js && node src/utils/seeders/clinic.seeder.js && node src/utils/seeders/admin.seeder.js && node src/utils/seeders/parent.seeder.js && node src/utils/seeders/children.seeder.js && node src/utils/seeders/measurement.seeder.js && node src/utils/seeders/cadre.seeder.js && node src/utils/seeders/article.seeder.js",
+    "seed:all": "node src/utils/seeders/region.seeder.js && node src/utils/seeders/clinic.seeder.js && node src/utils/seeders/admin.seeder.js admin@jagacilik.com Password123! && node src/utils/seeders/parent.seeder.js && node src/utils/seeders/children.seeder.js && node src/utils/seeders/measurement.seeder.js && node src/utils/seeders/cadre.seeder.js && node src/utils/seeders/article.seeder.js",
     "hit:region": "node src/utils/region.util.js",
     "migrate": "npx prisma migrate dev -n",
     "make:domain": "node src/utils/make-domain.util.js make:domain"

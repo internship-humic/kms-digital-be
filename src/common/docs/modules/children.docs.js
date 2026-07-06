@@ -1,7 +1,8 @@
 export default {
   "GET /children/": {
     summary: "Get All Children",
-    description: "Retrieve a paginated list of all children records (Admin and Cadre only)",
+    description:
+      "Retrieve a paginated list of all children records (Admin and Cadre only)",
 
     query: {
       page: {
@@ -54,9 +55,79 @@ export default {
     },
   },
 
+  "GET /children/risky": {
+    summary: "Get All Risky Children",
+    description:
+      "Retrieve all low risk and high risk children with the latest measurement",
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter children by name",
+        example: "Ahmad",
+      },
+    },
+
+    response: {
+      success: true,
+      status: "OK",
+      message: "Risky childrens retrieved successfully",
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 2,
+      },
+      data: {
+        items: [
+          {
+            id: "uuid-child-1",
+            name: "Ahmad",
+            birth_date: "2025-01-01T00:00:00.000Z",
+            parent_id: "uuid-parent-1",
+            gender: "MALE",
+            address: "Jl. Sudirman No. 5",
+            status: "LOWRISK",
+            parent: {
+              id: "uuid-parent-1",
+              name: "Jane Doe",
+              phone_number: "08123456789",
+            },
+            measurements: [
+              {
+                id: "uuid-measurement-1",
+                measurement_date: "2026-07-01T00:00:00.000Z",
+                age_month: 18,
+                body_weight: 9.4,
+                body_height: 74,
+                head_circumference: 45,
+                zscore_bb: -1.2,
+                zscore_tb: -0.8,
+                zscore_lk: null,
+                zscore_gizi: -1.1,
+              },
+            ],
+          },
+        ],
+        total_case: 2,
+        need_referral: 1,
+      },
+    },
+  },
+
   "GET /children/:parentId": {
     summary: "Get Children by Parent ID",
-    description: "Retrieve a list of children records associated with a specific parent ID",
+    description:
+      "Retrieve a list of children records associated with a specific parent ID",
 
     params: {
       parentId: "uuid-parent-1",
@@ -81,9 +152,32 @@ export default {
     },
   },
 
+  "GET /children/:id/intervention": {
+    summary: "Get Intervention by Children ID",
+    description: "Retrieve intervention flags for a child",
+
+    params: {
+      id: "uuid-child-1",
+    },
+
+    response: {
+      success: true,
+      status: "OK",
+      message: "Intervention retrieved successfully",
+      pagination: null,
+      data: {
+        id: "uuid-child-1",
+        referral: false,
+        supplement: true,
+        education: false,
+      },
+    },
+  },
+
   "POST /children/": {
     summary: "Create Child Profile",
-    description: "Add a new child profile and register the initial birth measurement",
+    description:
+      "Add a new child profile and register the initial birth measurement",
     request: {
       name: "Ahmad",
       birth_date: "2025-01-01",
@@ -145,9 +239,37 @@ export default {
     },
   },
 
+  "PATCH /children/:id/intervention": {
+    summary: "Update Intervention",
+    description: "Patch one or more intervention flags for a child",
+
+    params: {
+      id: "uuid-child-1",
+    },
+
+    request: {
+      referral: true,
+      supplement: false,
+      education: true,
+    },
+    response: {
+      success: true,
+      status: "OK",
+      message: "Intervention updated successfully",
+      pagination: null,
+      data: {
+        id: "uuid-child-1",
+        referral: true,
+        supplement: false,
+        education: true,
+      },
+    },
+  },
+
   "DELETE /children/:id": {
     summary: "Delete Child Profile",
-    description: "Remove a child profile and all associated measurements from the database",
+    description:
+      "Remove a child profile and all associated measurements from the database",
 
     params: {
       id: "uuid-child-1",

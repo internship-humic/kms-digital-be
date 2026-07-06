@@ -10,7 +10,9 @@ import regionDocs from "./modules/region.docs.js";
 import cadreDocs from "./modules/cadre.docs.js";
 
 import articleDocs from "./modules/article.docs.js";
+import notificationDocs from "./modules/notification.docs.js";
 const endpointDocs = {
+  ...notificationDocs,
   ...articleDocs,
   ...authDocs,
   ...childrenDocs,
@@ -144,6 +146,7 @@ function generateOpenAPI() {
     },
 
     tags: [
+      { name: "notification" },
       { name: "article" },
       { name: "auth" },
       { name: "children" },

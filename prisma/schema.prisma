@@ -52,13 +52,17 @@ model Parents {
 }
 
 model Childrens {
-  id         String         @id @default(uuid())
-  name       String
-  birth_date DateTime
-  parent_id  String
-  gender     Gender
-  address    String
-  status     Childrentatus?
+  id             String         @id @default(uuid())
+  name           String
+  birth_date     DateTime
+  parent_id      String
+  gender         Gender
+  address        String
+  status         Childrentatus?
+  is_intervented Boolean        @default(false)
+  referral       Boolean        @default(false)
+  supplement     Boolean        @default(false)
+  education      Boolean        @default(false)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

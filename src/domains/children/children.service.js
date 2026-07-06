@@ -11,6 +11,110 @@ class ChildrenService extends BaseService {
     // this.db = Prisma
   }
 
+  async getAllRiskyChildren(query) {
+    const { page, limit, offset } = getPagination(query);
+
+    const filter = {
+      status: {
+        in: ["LOWRISK", "HIGHRISK"],
+      },
+      is_intervented: false,
+    };
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = { contains: q, mode: "insensitive" };
+    }
+
+    const total = await this.db.childrens.count({ where: filter });
+
+    const needReferral = await this.db.childrens.count({
+      where: {
+        ...filter,
+        status: "HIGHRISK",
+      },
+    });
+
+    const data = await this.db.childrens.findMany({
+      where: filter,
+      include: {
+        parent: { select: { id: true, name: true, phone_number: true } },
+        measurements: {
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
+      skip: offset,
+      take: limit,
+      orderBy: { created_at: "desc" },
+    });
+
+    const pagination = getMeta(total, page, limit);
+
+    return {
+      data: {
+        items: data,
+        total_case: total,
+        need_referral: needReferral,
+      },
+      pagination,
+    };
+  }
+
+  async getInterventionByChildrenId(childrenId) {
+    const children = await this.db.childrens.findUnique({
+      where: { id: childrenId },
+      select: {
+        id: true,
+        is_intervented: true,
+        referral: true,
+        supplement: true,
+        education: true,
+      },
+    });
+
+    if (!children) {
+      throw this.error.notFound("Children not found");
+    }
+
+    return children;
+  }
+
+  async updateIntervention(childrenId, payload) {
+    const existingChildren = await this.db.childrens.findUnique({
+      where: { id: childrenId },
+    });
+
+    if (!existingChildren) {
+      throw this.error.notFound("Children not found");
+    }
+
+    const updated = await this.db.childrens.update({
+      where: { id: childrenId },
+      data: {
+        is_intervented: true,
+        ...(payload.referral !== undefined
+          ? { referral: payload.referral }
+          : {}),
+        ...(payload.supplement !== undefined
+          ? { supplement: payload.supplement }
+          : {}),
+        ...(payload.education !== undefined
+          ? { education: payload.education }
+          : {}),
+      },
+      select: {
+        id: true,
+        is_intervented: true,
+        referral: true,
+        supplement: true,
+        education: true,
+      },
+    });
+
+    return updated;
+  }
+
   async getAllChildrens(query) {
     const { page, limit, offset } = getPagination(query);
     const filter = ORMfilterable(query, ["name"]) || {};
@@ -34,14 +138,10 @@ class ChildrenService extends BaseService {
   }
 
   async getChildrensByParent(parentId) {
-    const data = await this.db.childrens.findMany({
+    return await this.db.childrens.findMany({
       where: { parent_id: parentId },
-      skip: offset,
-      take: limit,
       orderBy: { created_at: "desc" },
     });
-
-    return data;
   }
 
   async createChildren(info) {
@@ -57,7 +157,13 @@ class ChildrenService extends BaseService {
       head_circumference,
     } = info;
 
-    await this.findParent(parent_id);
+    const parent = await this.db.parents.findUnique({
+      where: { id: parent_id },
+    });
+
+    if (!parent) {
+      throw BaseError.notFound("Parent not found");
+    }
 
     const measurementDate = new Date(birth_date);
 
@@ -90,7 +196,6 @@ class ChildrenService extends BaseService {
           body_weight,
           body_height,
           head_circumference,
-
           zscore_bb: zscores.zscore_bb,
           zscore_tb: zscores.zscore_tb,
           zscore_lk: zscores.zscore_lk,
@@ -103,16 +208,26 @@ class ChildrenService extends BaseService {
   }
 
   async updateChildren(id, info) {
-    await this.findChildren(id);
+    const existingChildren = await this.db.childrens.findUnique({
+      where: { id },
+    });
+
+    if (!existingChildren) {
+      throw BaseError.notFound("Children not found");
+    }
 
     const { name, birth_date, parent_id, gender, address, status } = info;
 
-    await this.findParent(parent_id);
+    const parent = await this.db.parents.findUnique({
+      where: { id: parent_id },
+    });
+
+    if (!parent) {
+      throw BaseError.notFound("Parent not found");
+    }
 
     return await this.db.childrens.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         name,
         birth_date: new Date(birth_date),
@@ -125,12 +240,16 @@ class ChildrenService extends BaseService {
   }
 
   async deleteChildren(id) {
-    await this.findChildren(id);
+    const existingChildren = await this.db.childrens.findUnique({
+      where: { id },
+    });
+
+    if (!existingChildren) {
+      throw BaseError.notFound("Children not found");
+    }
 
     await this.db.childrens.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     return true;

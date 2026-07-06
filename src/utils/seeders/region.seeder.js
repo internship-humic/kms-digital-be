@@ -3,7 +3,7 @@ import BaseSeeder from "../../common/base_classes/base-seeder.js";
 
 class RegionSeeder extends BaseSeeder {
   async seed() {
-    const raw = await fs.readFile("./src/database/regions.json", "utf-8");
+    const raw = await fs.readFile("./src/database/region/regions.json", "utf-8");
 
     const { provinces, regencies, districts, villages } = JSON.parse(raw);
 

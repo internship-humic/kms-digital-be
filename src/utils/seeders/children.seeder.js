@@ -34,6 +34,9 @@ class ChildrenSeeder extends BaseSeeder {
           parent_id: parent.id,
           gender,
           address: parent.address,
+          referral: false,
+          supplement: false,
+          education: false,
         });
 
         counter++;

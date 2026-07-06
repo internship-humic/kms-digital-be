@@ -181,6 +181,10 @@ class MeasurementService extends BaseService {
         },
         data: {
           status,
+          is_intervented: false,
+          referral: false,
+          supplement: false,
+          education: false,
         },
       });
 
@@ -242,6 +246,10 @@ class MeasurementService extends BaseService {
         },
         data: {
           status,
+          is_intervented: false,
+          referral: false,
+          supplement: false,
+          education: false,
         },
       });
 
