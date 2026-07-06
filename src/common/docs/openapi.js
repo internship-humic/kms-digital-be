@@ -11,7 +11,9 @@ import cadreDocs from "./modules/cadre.docs.js";
 
 import articleDocs from "./modules/article.docs.js";
 import notificationDocs from "./modules/notification.docs.js";
+import dashboardDocs from "./modules/dashboard.docs.js";
 const endpointDocs = {
+  ...dashboardDocs,
   ...notificationDocs,
   ...articleDocs,
   ...authDocs,
@@ -146,6 +148,7 @@ function generateOpenAPI() {
     },
 
     tags: [
+      { name: "dashboard" },
       { name: "notification" },
       { name: "article" },
       { name: "auth" },

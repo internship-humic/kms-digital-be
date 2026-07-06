@@ -11,18 +11,150 @@ class ArticleSeeder extends BaseSeeder {
     const articles = [
       {
         id: "1",
-        title: "Pentingnya Imunisasi Dasar Lengkap",
+        title: "Pentingnya Imunisasi Dasar Lengkap untuk Bayi dan Balita",
         description:
-          "Kenali manfaat imunisasi dasar lengkap untuk melindungi anak dari penyakit berbahaya.",
+          "Imunisasi dasar lengkap membantu melindungi anak dari berbagai penyakit berbahaya dan meningkatkan kekebalan tubuh sejak dini.",
         content: {
           type: "doc",
           content: [
+            {
+              type: "heading",
+              attrs: {
+                level: 1,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Mengapa Imunisasi Sangat Penting?",
+                },
+              ],
+            },
             {
               type: "paragraph",
               content: [
                 {
                   type: "text",
-                  text: "Imunisasi merupakan salah satu cara terbaik untuk melindungi anak dari berbagai penyakit menular.",
+                  text: "Imunisasi merupakan salah satu upaya pencegahan penyakit yang paling efektif. Dengan memberikan vaksin sesuai jadwal, tubuh anak akan membentuk kekebalan terhadap penyakit tertentu sehingga risiko sakit berat dapat dikurangi.",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Program imunisasi dasar telah terbukti menurunkan angka kesakitan dan kematian akibat penyakit menular seperti campak, polio, difteri, hepatitis B, dan tuberkulosis.",
+                },
+              ],
+            },
+            {
+              type: "heading",
+              attrs: {
+                level: 2,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Manfaat Imunisasi",
+                },
+              ],
+            },
+            {
+              type: "bulletList",
+              content: [
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Melindungi anak dari penyakit berbahaya.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Membantu membentuk kekebalan kelompok (herd immunity).",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Mengurangi biaya pengobatan akibat penyakit serius.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "image",
+              attrs: {
+                src: "https://images.unsplash.com/photo-1584515933487-779824d29309",
+                alt: "Dokter sedang memberikan imunisasi",
+                title: "Proses imunisasi",
+              },
+            },
+            {
+              type: "heading",
+              attrs: {
+                level: 2,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Jadwal Imunisasi",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Orang tua sebaiknya mengikuti jadwal imunisasi yang telah ditetapkan oleh tenaga kesehatan. Jika ada jadwal yang terlewat, konsultasikan dengan dokter atau petugas kesehatan untuk mendapatkan imunisasi kejar.",
+                },
+              ],
+            },
+            {
+              type: "blockquote",
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Lebih baik mencegah daripada mengobati. Imunisasi adalah investasi kesehatan jangka panjang bagi anak.",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Pastikan anak berada dalam kondisi sehat saat menerima imunisasi dan selalu simpan buku KIA untuk memantau riwayat vaksinasi.",
                 },
               ],
             },
@@ -36,25 +168,310 @@ class ArticleSeeder extends BaseSeeder {
       },
       {
         id: "2",
-        title: "Menu MPASI Bergizi Seimbang",
+        title: "Menerapkan Gizi Seimbang untuk Mendukung Tumbuh Kembang Balita",
         description:
-          "Contoh menu MPASI bergizi untuk mendukung tumbuh kembang balita.",
+          "Gizi seimbang sangat penting untuk mendukung pertumbuhan fisik, perkembangan otak, dan daya tahan tubuh balita.",
         content: {
           type: "doc",
           content: [
+            {
+              type: "heading",
+              attrs: {
+                level: 1,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Apa Itu Gizi Seimbang?",
+                },
+              ],
+            },
             {
               type: "paragraph",
               content: [
                 {
                   type: "text",
-                  text: "MPASI sebaiknya mengandung karbohidrat, protein, lemak, vitamin, dan mineral.",
+                  text: "Gizi seimbang adalah pola makan yang mengandung berbagai zat gizi dalam jumlah dan jenis yang sesuai dengan kebutuhan tubuh. Pada masa balita, pemenuhan gizi menjadi sangat penting karena merupakan periode emas pertumbuhan dan perkembangan.",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Anak yang memperoleh asupan gizi yang baik cenderung memiliki daya tahan tubuh lebih kuat, pertumbuhan tinggi dan berat badan yang optimal, serta kemampuan belajar yang lebih baik.",
+                },
+              ],
+            },
+            {
+              type: "image",
+              attrs: {
+                src: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80",
+                alt: "Makanan sehat untuk balita",
+                title: "Menu Gizi Seimbang",
+              },
+            },
+            {
+              type: "heading",
+              attrs: {
+                level: 2,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Komponen Gizi Seimbang",
+                },
+              ],
+            },
+            {
+              type: "bulletList",
+              content: [
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Karbohidrat sebagai sumber energi utama.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Protein hewani dan nabati untuk pertumbuhan jaringan tubuh.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Sayur dan buah sebagai sumber vitamin, mineral, dan serat.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Lemak sehat untuk perkembangan otak dan penyerapan vitamin.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Air putih yang cukup setiap hari agar tubuh tetap terhidrasi.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "heading",
+              attrs: {
+                level: 2,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Contoh Menu Harian",
+                },
+              ],
+            },
+            {
+              type: "orderedList",
+              content: [
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Sarapan: Bubur ayam dengan telur rebus dan buah pisang.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Makan siang: Nasi, ikan, tumis bayam, dan jeruk.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Camilan: Yogurt tanpa gula atau potongan buah segar.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Makan malam: Sup ayam dengan wortel, kentang, dan tahu.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "blockquote",
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Tidak ada satu jenis makanan yang dapat memenuhi seluruh kebutuhan gizi anak. Variasi makanan adalah kunci gizi seimbang.",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "heading",
+              attrs: {
+                level: 2,
+              },
+              content: [
+                {
+                  type: "text",
+                  text: "Tips untuk Orang Tua",
+                },
+              ],
+            },
+            {
+              type: "bulletList",
+              content: [
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Sajikan makanan dengan warna yang beragam agar lebih menarik.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Batasi konsumsi makanan tinggi gula, garam, dan lemak jenuh.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Ajak anak makan bersama keluarga untuk membangun kebiasaan makan yang baik.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        {
+                          type: "text",
+                          text: "Lakukan pemantauan berat badan dan tinggi badan secara rutin di Posyandu.",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Dengan menerapkan pola makan bergizi seimbang sejak dini, orang tua dapat membantu anak tumbuh sehat, aktif, dan memiliki fondasi yang kuat untuk perkembangan di masa depan.",
                 },
               ],
             },
           ],
         },
         cover_image:
-          "https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80",
         writer_name: "Nadia Putri, S.Gz",
         writer_identity: "Ahli Gizi",
         type: "NUTRITION",

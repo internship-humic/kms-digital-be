@@ -7,7 +7,9 @@ import measurementRoutes from "./domains/measurement/measurement.routes.js";
 import cadreRoutes from "./domains/cadre/cadre.routes.js";
 import articleRoutes from "./domains/article/article.routes.js";
 import notificationRoutes from "./domains/notification/notification.routes.js";
+import dashboardRoutes from "./domains/dashboard/dashboard.routes.js";
 const routes = [
+  { path: "/dashboard", route: dashboardRoutes },
   { path: "/notification", route: notificationRoutes },
   { path: "/article", route: articleRoutes },
   { path: "/cadre", route: cadreRoutes },
