@@ -4,21 +4,32 @@ import logger from "../utils/logger.util.js";
 const validate = (schema) => (req, res, next) => {
   const validated = schema.validate(req.body, {
     abortEarly: false,
+    convert: true,
     errors: {
       wrap: {
         label: "",
       },
     },
-    convert: true,
   });
 
   if (validated.error) {
-    const message = validated.error.details
-      .map((detail) => detail.message)
-      .join(", ");
-    logger.warn(`Request invalid: ${message}`);
-    return next(BaseError.unprocessable(message));
+    const details = {};
+
+    validated.error.details.forEach((detail) => {
+      const field = detail.path.join(".");
+
+      if (!details[field]) {
+        details[field] = [];
+      }
+
+      details[field].push(detail.message);
+    });
+
+    logger.warn("Request validation failed", details);
+
+    return next(BaseError.unprocessable("Validation failed", details));
   }
+
   next();
 };
 
