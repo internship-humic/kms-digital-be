@@ -1,6 +1,8 @@
 import BaseService from "../../common/base_classes/base-service.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
 import { ORMfilterable } from "../../utils/query.util.js";
+import NotificationService from "../notification/notification.service.js";
+import Roles from "../../common/enums/user-roles.enum.js";
 
 class ArticleService extends BaseService {
   constructor() {
@@ -85,6 +87,16 @@ class ArticleService extends BaseService {
         type: info.type,
         cover_image: file ? `/images/${file.filename}` : null,
       },
+    });
+
+    await NotificationService.createNotification({
+      recipient_id: parentId,
+      recipient_role: Roles.Parents,
+      title: "Artikel baru tersedia",
+      message: "Ada artikel baru yang bisa Anda baca.",
+      category: "ARTICLE",
+      reference_id: article.id,
+      reference_type: "article",
     });
 
     return article;

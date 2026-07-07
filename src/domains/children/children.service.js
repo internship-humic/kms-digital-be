@@ -3,6 +3,8 @@ import { calculateAllZScores } from "../../utils/zscore.util.js";
 import calculateAgeInMonths from "../../utils/age.util.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
 import { ORMfilterable } from "../../utils/query.util.js";
+import NotificationService from "../notification/notification.service.js";
+import Roles from "../../common/enums/user-roles.enum.js";
 
 class ChildrenService extends BaseService {
   constructor() {
@@ -112,6 +114,16 @@ class ChildrenService extends BaseService {
       },
     });
 
+    await NotificationService.createNotification({
+      recipient_id: existingChildren.parent_id,
+      recipient_role: Roles.Parents,
+      title: "Intervensi anak diperbarui",
+      message: "Status intervensi anak Anda sudah diperbarui.",
+      category: "MEASUREMENT",
+      reference_id: existingChildren.id,
+      reference_type: "children",
+    });
+
     return updated;
   }
 
@@ -203,6 +215,16 @@ class ChildrenService extends BaseService {
         },
       });
 
+      await NotificationService.createNotification({
+        recipient_id: parent_id,
+        recipient_role: Roles.Parents,
+        title: "Profil anak berhasil dibuat",
+        message: `Profil anak ${children.name} berhasil ditambahkan.`,
+        category: "ACCOUNT",
+        reference_id: children.id,
+        reference_type: "children",
+      });
+
       return children;
     });
   }
@@ -225,6 +247,16 @@ class ChildrenService extends BaseService {
     if (!parent) {
       throw BaseError.notFound("Parent not found");
     }
+
+    await NotificationService.createNotification({
+      recipient_id: parent_id,
+      recipient_role: Roles.Parents,
+      title: "Profil anak berhasil diubah",
+      message: `Profil anak ${existingChildren.name} berhasil diubah.`,
+      category: "ACCOUNT",
+      reference_id: existingChildren.id,
+      reference_type: "children",
+    });
 
     return await this.db.childrens.update({
       where: { id },
@@ -250,6 +282,16 @@ class ChildrenService extends BaseService {
 
     await this.db.childrens.delete({
       where: { id },
+    });
+
+    await NotificationService.createNotification({
+      recipient_id: parent_id,
+      recipient_role: Roles.Parents,
+      title: "Profil anak berhasil dihapus",
+      message: `Profil anak ${existingChildren.name} berhasil dihapus.`,
+      category: "ACCOUNT",
+      reference_id: existingChildren.id,
+      reference_type: "children",
     });
 
     return true;

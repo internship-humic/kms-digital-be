@@ -1,28 +1,27 @@
-
 import NotificationController from "./notification.controller.js";
 import BaseRoutes from "../../common/base_classes/base-routes.js";
-import { notificationSchema } from "./notification.schema.js";
+import { createNotificationSchema, updateNotificationSchema } from "./notification.schema.js";
 
 class NotificationRoutes extends BaseRoutes {
   constructor() {
     super("/notification", NotificationController);
-    // this.router = Router();
-    // this.auth = AuthMiddleware;
-    // this.validate = Validate;
-    // this.errCatch = ErrorMiddleware.errorCatcher;
-    // this.controller = controller;
-    // this.roles = Roles;
-    // this.routes();
   }
 
   routes() {
     this.register({
       method: "get",
+      path: "/",
+      auth: true,
+      summary: "Get All Notifications",
+      handler: this.controller.getAllNotifications,
+    });
+
+    this.register({
+      method: "get",
       path: "/:id",
       auth: true,
-      roles: [this.roles.Admin],
       summary: "Get Notification by ID",
-      handler: this.controller.someMethod,
+      handler: this.controller.getNotificationById,
     });
 
     this.register({
@@ -30,9 +29,27 @@ class NotificationRoutes extends BaseRoutes {
       path: "/",
       auth: true,
       roles: [this.roles.Admin],
-      schema: notificationSchema,
+      schema: createNotificationSchema,
       summary: "Create Notification",
-      handler: this.controller.someMethod,
+      handler: this.controller.createNotification,
+    });
+
+    this.register({
+      method: "patch",
+      path: "/:id",
+      auth: true,
+      schema: updateNotificationSchema,
+      summary: "Update Notification",
+      handler: this.controller.updateNotification,
+    });
+
+    this.register({
+      method: "delete",
+      path: "/:id",
+      auth: true,
+      roles: [this.roles.Admin],
+      summary: "Delete Notification",
+      handler: this.controller.deleteNotification,
     });
   }
 }

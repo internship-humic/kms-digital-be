@@ -1,6 +1,8 @@
 import BaseService from "../../common/base_classes/base-service.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
 import { ORMfilterable } from "../../utils/query.util.js";
+import NotificationService from "../notification/notification.service.js";
+import Roles from "../../common/enums/user-roles.enum.js";
 
 class ClinicService extends BaseService {
   constructor() {
@@ -111,13 +113,25 @@ class ClinicService extends BaseService {
       throw this.error.notFound("Village not found");
     }
 
-    return await this.db.clinic.create({
+    const clinic = await this.db.clinic.create({
       data: {
         name: info.name,
         address: info.address,
         village_id: info.village_id,
       },
     });
+
+    await NotificationService.createNotification({
+      recipient_id: adminId,
+      recipient_role: Roles.Admin,
+      title: "Posyandu berhasil dibuat",
+      message: `Posyandu ${clinic.name} berhasil ditambahkan.`,
+      category: "ANNOUNCEMENT",
+      reference_id: clinic.id,
+      reference_type: "clinic",
+    });
+
+    return clinic;
   }
 
   async updateClinic(id, info) {
@@ -135,21 +149,43 @@ class ClinicService extends BaseService {
       }
     }
 
-    return await this.db.clinic.update({
+    const clinic = await this.db.clinic.update({
       where: {
         id,
       },
       data: info,
     });
+
+    await NotificationService.createNotification({
+      recipient_id: adminId,
+      recipient_role: Roles.Admin,
+      title: "Posyandu berhasil diubah",
+      message: `Posyandu ${clinic.name} berhasil diubah.`,
+      category: "ANNOUNCEMENT",
+      reference_id: clinic.id,
+      reference_type: "clinic",
+    });
+
+    return clinic;
   }
 
   async deleteClinic(id) {
-    await this.getClinicById(id);
+    const clinic = await this.getClinicById(id);
 
     await this.db.clinic.delete({
       where: {
         id,
       },
+    });
+
+    await NotificationService.createNotification({
+      recipient_id: adminId,
+      recipient_role: Roles.Admin,
+      title: "Posyandu berhasil dihapus",
+      message: `Posyandu ${clinic.name} berhasil dihapus.`,
+      category: "ANNOUNCEMENT",
+      reference_id: clinic.id,
+      reference_type: "clinic",
     });
 
     return true;

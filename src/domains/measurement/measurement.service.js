@@ -4,6 +4,8 @@ import calculateAgeInMonths from "../../utils/age.util.js";
 import { calculateAllZScores } from "../../utils/zscore.util.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
 import { ORMfilterable } from "../../utils/query.util.js";
+import NotificationService from "../notification/notification.service.js";
+import Roles from "../../common/enums/user-roles.enum.js";
 
 class MeasurementService extends BaseService {
   constructor() {
@@ -188,6 +190,16 @@ class MeasurementService extends BaseService {
         },
       });
 
+      await NotificationService.createNotification({
+        recipient_id: children.parent_id,
+        recipient_role: Roles.Parents,
+        title: "Pengukuran baru berhasil disimpan",
+        message: "Hasil pengukuran terbaru anak Anda sudah tersedia.",
+        category: "MEASUREMENT",
+        reference_id: measurement.id,
+        reference_type: "measurement",
+      });
+
       return measurement;
     });
   }
@@ -253,6 +265,16 @@ class MeasurementService extends BaseService {
         },
       });
 
+      await NotificationService.createNotification({
+        recipient_id: children.parent_id,
+        recipient_role: Roles.Parents,
+        title: "Perubahan hasil pengukuran berhasil disimpan",
+        message: "Hasil pengukuran terbaru anak Anda mengalami perubahan.",
+        category: "MEASUREMENT",
+        reference_id: measurement.id,
+        reference_type: "measurement",
+      });
+
       return updatedMeasurement;
     });
   }
@@ -297,6 +319,17 @@ class MeasurementService extends BaseService {
               })
             : null,
         },
+      });
+
+      await NotificationService.createNotification({
+        recipient_id: children.parent_id,
+        recipient_role: Roles.Parents,
+        title: "Pengukuran baru berhasil dihapus",
+        message:
+          "Hasil pengukuran anak Anda terdapat kesalahan pendataan dan akan segera dihapus.",
+        category: "MEASUREMENT",
+        reference_id: measurement.id,
+        reference_type: "measurement",
       });
 
       return true;

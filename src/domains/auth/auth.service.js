@@ -9,6 +9,7 @@ import { ORMfilterable } from "../../utils/query.util.js";
 import Roles from "../../common/enums/user-roles.enum.js";
 import jwt from "jsonwebtoken";
 import { sendMail } from "../../utils/mail.util.js";
+import NotificationService from "../notification/notification.service.js";
 
 class AuthService extends BaseService {
   constructor() {
@@ -112,6 +113,16 @@ class AuthService extends BaseService {
     });
 
     delete user.password;
+
+    await NotificationService.createNotification({
+      recipient_id: createdParent.id,
+      recipient_role: Roles.Parents,
+      title: "Akun berhasil dibuat",
+      message: "Akun orang tua Anda telah berhasil dibuat.",
+      category: "ACCOUNT",
+      reference_id: createdParent.id,
+      reference_type: "parent",
+    });
 
     return {
       user,
