@@ -43,6 +43,7 @@ class ErrorMiddleware {
           : process.env.NODE_ENV === "production"
             ? StatusCodes.INTERNAL_SERVER_ERROR.message
             : err.message,
+      details: err.details ?? null,
       request_id: requestId,
       timestamp,
     };
