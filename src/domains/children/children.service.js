@@ -164,6 +164,7 @@ class ChildrenService extends BaseService {
       gender,
       address,
       status,
+      clinic_id,
       body_weight,
       body_height,
       head_circumference,
@@ -204,6 +205,7 @@ class ChildrenService extends BaseService {
         data: {
           children_id: children.id,
           measurement_date: measurementDate,
+          clinic_id,
           age_month: 0,
           body_weight,
           body_height,

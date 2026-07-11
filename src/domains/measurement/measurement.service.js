@@ -1,6 +1,7 @@
 import BaseService from "../../common/base_classes/base-service.js";
 
 import calculateAgeInMonths from "../../utils/age.util.js";
+import calculateRiskStatus from "../../utils/risk-status.util.js";
 import { calculateAllZScores } from "../../utils/zscore.util.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
 import { ORMfilterable } from "../../utils/query.util.js";
@@ -78,7 +79,7 @@ class MeasurementService extends BaseService {
     });
 
     if (!measurement) {
-      throw new BaseError("Measurement not found", 404);
+      throw this.error.notFound("Measurement not found");
     }
 
     return measurement;
@@ -145,7 +146,9 @@ class MeasurementService extends BaseService {
     const ageMonth = calculateAgeInMonths(children.birth_date, measurementDate);
 
     if (ageMonth < 0) {
-      throw new BaseError("Measurement date cannot be before birth date", 400);
+      throw this.error.badRequest(
+        "Measurement date cannot be before birth date",
+      );
     }
 
     const zscore = calculateAllZScores({
@@ -204,21 +207,19 @@ class MeasurementService extends BaseService {
     });
   }
 
-  async updateMeasurement(childrenId, measurementId, body) {
-    const children = await this.findChildren(childrenId);
-
+  async updateMeasurement(measurementId, body) {
     const measurement = await this.findMeasurement(measurementId);
 
-    if (measurement.children_id !== children.id) {
-      throw new BaseError("Measurement does not belong to this child", 400);
-    }
+    const children = await this.findChildren(measurement.children_id);
 
     const measurementDate = new Date(body.measurement_date);
 
     const ageMonth = calculateAgeInMonths(children.birth_date, measurementDate);
 
     if (ageMonth < 0) {
-      throw new BaseError("Measurement date cannot be before birth date", 400);
+      throw this.error.badRequest(
+        "Measurement date cannot be before birth date",
+      );
     }
 
     const zscore = calculateAllZScores({
@@ -344,7 +345,7 @@ class MeasurementService extends BaseService {
     });
 
     if (!children) {
-      throw new BaseError("Children not found", 404);
+      throw this.error.notFound("Children not found");
     }
 
     return children;
@@ -358,7 +359,7 @@ class MeasurementService extends BaseService {
     });
 
     if (!measurement) {
-      throw new BaseError("Measurement not found", 404);
+      throw this.error.notFound("Measurement not found");
     }
 
     return measurement;

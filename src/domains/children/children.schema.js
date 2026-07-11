@@ -7,7 +7,9 @@ const childrenSchema = Joi.object({
 
   birth_date: Joi.date().required(),
 
-  parent_id: Joi.string().uuid().required(),
+  parent_id: Joi.string().required(),
+
+  clinic_id: Joi.string().required(),
 
   gender: Joi.string()
     .valid(...Object.values(Gender))

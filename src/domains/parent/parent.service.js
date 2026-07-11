@@ -34,7 +34,7 @@ class ParentService extends BaseService {
     return { data, pagination };
   }
 
-  async getParentsByClinic(query, clinicId) {
+  async getAllParentsByClinic(query, clinicId) {
     const { page, limit, offset } = getPagination(query);
 
     const filter = ORMfilterable(query, ["name"]) || {};
