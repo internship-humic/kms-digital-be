@@ -17,8 +17,9 @@ class MeasurementController extends BaseController {
 
   async updateMeasurement(req, res) {
     const { id } = req.params;
+    const info = req.body;
 
-    const data = await this.service.updateMeasurement(id, req.body);
+    const data = await this.service.updateMeasurement(id, info);
 
     return this.response.success(res, data, "Measurement updated successfully");
   }
