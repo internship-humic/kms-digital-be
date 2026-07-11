@@ -115,12 +115,12 @@ class AuthService extends BaseService {
     delete user.password;
 
     await NotificationService.createNotification({
-      recipient_id: createdParent.id,
+      recipient_id: user.id,
       recipient_role: Roles.Parents,
       title: "Akun berhasil dibuat",
       message: "Akun orang tua Anda telah berhasil dibuat.",
       category: "ACCOUNT",
-      reference_id: createdParent.id,
+      reference_id: user.id,
       reference_type: "parent",
     });
 
