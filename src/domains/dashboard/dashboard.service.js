@@ -15,6 +15,17 @@ class DashboardService extends BaseService {
   }
 
   async getCadreDashboard(cadreId, clinicId) {
+    const cadre = await this.db.cadre.findUnique({
+      where: { id: cadreId },
+      include: {
+        clinic: true,
+      },
+    });
+
+    if (!cadre) {
+      throw new this.error.NotFoundError("Cadre not found");
+    }
+
     const childrens = await this.db.childrens.count({
       where: {
         parent: {
@@ -45,6 +56,7 @@ class DashboardService extends BaseService {
     });
 
     const data = {
+      cadre: cadre,
       total_children: childrens,
       total_risky_children: riskyChildren,
       latest_measurements: latestMeasurements,
