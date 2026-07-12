@@ -11,6 +11,32 @@ class ArticleService extends BaseService {
     // this.db = Prisma
   }
 
+  async notifyParents(payload) {
+    const parents = await this.db.parents.findMany({
+      select: {
+        id: true,
+      },
+    });
+
+    if (parents.length === 0) {
+      return [];
+    }
+
+    return await Promise.all(
+      parents.map((parent) =>
+        NotificationService.createNotification({
+          recipient_id: parent.id,
+          recipient_role: Roles.Parents,
+          title: payload.title,
+          message: payload.message,
+          category: payload.category,
+          reference_id: payload.reference_id,
+          reference_type: payload.reference_type,
+        }),
+      ),
+    );
+  }
+
   async getAllArticles(query) {
     const { page, limit, offset } = getPagination(query);
 
@@ -89,14 +115,12 @@ class ArticleService extends BaseService {
       },
     });
 
-    await NotificationService.createNotification({
-      recipient_id: parentId,
-      recipient_role: Roles.Parents,
+    await this.notifyParents({
       title: "Artikel baru tersedia",
-      message: "Ada artikel baru yang bisa Anda baca.",
+      message: 'Ada artikel baru yang bisa Anda baca.',
       category: "ARTICLE",
       reference_id: article.id,
-      reference_type: "article",
+      reference_type: "acticle",
     });
 
     return article;
