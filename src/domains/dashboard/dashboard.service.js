@@ -8,10 +8,18 @@ class DashboardService extends BaseService {
   }
 
   async getParentDashboard(parentId) {
-    return await this.db.childrens.findMany({
+    const childrens = await this.db.childrens.findMany({
       where: { parent_id: parentId },
       orderBy: { created_at: "desc" },
+      include: {
+        measurements: {
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
     });
+
+    return childrens;
   }
 
   async getCadreDashboard(cadreId, clinicId) {
