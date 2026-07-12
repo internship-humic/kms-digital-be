@@ -156,6 +156,105 @@ class ChildrenService extends BaseService {
     });
   }
 
+  async getAllChildrenByClinic(clinicId, query) {
+    const { page, limit, offset } = getPagination(query);
+    const filter = ORMfilterable(query, ["name"]) || {};
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = { contains: q, mode: "insensitive" };
+    }
+
+    filter.measurements = {
+      some: {
+        clinic_id: clinicId,
+      },
+    };
+
+    const total = await this.db.childrens.count({ where: filter });
+
+    const data = await this.db.childrens.findMany({
+      where: filter,
+      include: {
+        parent: { select: { id: true, name: true, phone_number: true } },
+        measurements: {
+          where: { clinic_id: clinicId },
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
+      skip: offset,
+      take: limit,
+      orderBy: { created_at: "desc" },
+    });
+
+    const pagination = getMeta(total, page, limit);
+
+    return {
+      data: {
+        items: data,
+        total_case: total,
+      },
+      pagination,
+    };
+  }
+
+  async getAllRiskyChildrenByClinic(clinicId, query) {
+    const { page, limit, offset } = getPagination(query);
+
+    const filter = {
+      status: {
+        in: ["LOWRISK", "HIGHRISK"],
+      },
+      is_intervented: false,
+      measurements: {
+        some: {
+          clinic_id: clinicId,
+        },
+      },
+    };
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = { contains: q, mode: "insensitive" };
+    }
+
+    const total = await this.db.childrens.count({ where: filter });
+
+    const needReferral = await this.db.childrens.count({
+      where: {
+        ...filter,
+        status: "HIGHRISK",
+      },
+    });
+
+    const data = await this.db.childrens.findMany({
+      where: filter,
+      include: {
+        parent: { select: { id: true, name: true, phone_number: true } },
+        measurements: {
+          where: { clinic_id: clinicId },
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
+      skip: offset,
+      take: limit,
+      orderBy: { created_at: "desc" },
+    });
+
+    const pagination = getMeta(total, page, limit);
+
+    return {
+      data: {
+        items: data,
+        total_case: total,
+        need_referral: needReferral,
+      },
+      pagination,
+    };
+  }
+
   async createChildren(info) {
     const {
       name,

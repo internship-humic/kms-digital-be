@@ -90,9 +90,7 @@ class ArticleService extends BaseService {
 
   async getArticleById(id) {
     const article = await this.db.article.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!article) {
@@ -102,22 +100,31 @@ class ArticleService extends BaseService {
     return article;
   }
 
-  async createArticle(info, file) {
+  async createArticle(info, files) {
+    const content =
+      typeof info.content === "string"
+        ? JSON.parse(info.content)
+        : info.content;
+
+    const coverImage = files?.cover_image?.[0]
+      ? `/images/${files.cover_image[0].filename}`
+      : null;
+
     const article = await this.db.article.create({
       data: {
         title: info.title,
         description: info.description,
-        content: info.content,
+        content,
         writer_name: info.writer_name,
         writer_identity: info.writer_identity,
         type: info.type,
-        cover_image: file ? `/images/${file.filename}` : null,
+        cover_image: coverImage,
       },
     });
 
     await this.notifyParents({
       title: "Artikel baru tersedia",
-      message: 'Ada artikel baru yang bisa Anda baca.',
+      message: "Ada artikel baru yang bisa Anda baca.",
       category: "ARTICLE",
       reference_id: article.id,
       reference_type: "acticle",
@@ -135,7 +142,7 @@ class ArticleService extends BaseService {
       throw this.error.notFound("Article not found");
     }
 
-    let content =
+    const content =
       typeof info.content === "string"
         ? JSON.parse(info.content)
         : info.content;
@@ -146,36 +153,8 @@ class ArticleService extends BaseService {
       coverImage = `/images/${files.cover_image[0].filename}`;
     }
 
-    const contentImages =
-      files?.content_images?.map((file) => `/images/${file.filename}`) || [];
-
-    if (content && contentImages.length) {
-      let imageIndex = 0;
-
-      const replaceImage = (node) => {
-        if (!node || typeof node !== "object") return;
-
-        if (
-          node.type === "image" &&
-          node.attrs &&
-          typeof node.attrs.src === "string" &&
-          node.attrs.src.startsWith("image-")
-        ) {
-          node.attrs.src = contentImages[imageIndex++] || node.attrs.src;
-        }
-
-        if (Array.isArray(node.content)) {
-          node.content.forEach(replaceImage);
-        }
-      };
-
-      replaceImage(content);
-    }
-
     const article = await this.db.article.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         title: info.title,
         description: info.description,
@@ -192,9 +171,7 @@ class ArticleService extends BaseService {
 
   async deleteArticle(id) {
     const article = await this.db.article.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!article) {
@@ -202,9 +179,7 @@ class ArticleService extends BaseService {
     }
 
     await this.db.article.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     return true;

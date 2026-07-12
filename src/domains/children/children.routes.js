@@ -88,6 +88,24 @@ class ChildrenRoutes extends BaseRoutes {
       summary: "Delete Child by ID",
       handler: this.controller.deleteChildren,
     });
+
+    this.register({
+      method: "get",
+      path: "/clinic/:clinicId",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Get All Children by Clinic",
+      handler: this.controller.getAllChildrenByClinic,
+    });
+
+    this.register({
+      method: "get",
+      path: "/clinic/:clinicId/risky",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Get All Risky Children by Clinic",
+      handler: this.controller.getAllRiskyChildrenByClinic,
+    });
   }
 }
 

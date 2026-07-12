@@ -78,6 +78,37 @@ class ChildrenController extends BaseController {
 
     return this.response.success(res, null, "Children deleted successfully");
   }
+
+  async getAllChildrenByClinic(req, res) {
+    const { clinicId } = req.params;
+    const query = req.query;
+
+    const data = await this.service.getAllChildrenByClinic(clinicId, query);
+
+    return this.response.success(
+      res,
+      data.data,
+      "Children by clinic retrieved successfully",
+      data.pagination,
+    );
+  }
+
+  async getAllRiskyChildrenByClinic(req, res) {
+    const { clinicId } = req.params;
+    const query = req.query;
+
+    const data = await this.service.getAllRiskyChildrenByClinic(
+      clinicId,
+      query,
+    );
+
+    return this.response.success(
+      res,
+      data.data,
+      "Risky children by clinic retrieved successfully",
+      data.pagination,
+    );
+  }
 }
 
 export default new ChildrenController();

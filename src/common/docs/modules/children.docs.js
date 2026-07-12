@@ -283,4 +283,154 @@ export default {
       data: null,
     },
   },
+
+  "GET /children/clinic/:clinicId": {
+    summary: "Get All Children by Clinic",
+    description:
+      "Retrieve a paginated list of all children records that have measurements in a specific clinic (Admin and Cadre only)",
+
+    params: {
+      clinicId: "uuid-clinic-1",
+    },
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter children by name",
+        example: "Ahmad",
+      },
+      name: {
+        type: "string",
+        description: "Filter by exact name match (case-insensitive)",
+        example: "Ahmad",
+      },
+    },
+
+    response: {
+      success: true,
+      status: "OK",
+      message: "Children by clinic retrieved successfully",
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 1,
+      },
+      data: {
+        items: [
+          {
+            id: "uuid-child-1",
+            name: "Ahmad",
+            birth_date: "2025-01-01T00:00:00.000Z",
+            parent_id: "uuid-parent-1",
+            gender: "MALE",
+            address: "Jl. Sudirman No. 5",
+            status: "NORMAL",
+            parent: {
+              id: "uuid-parent-1",
+              name: "Jane Doe",
+              phone_number: "08123456789",
+            },
+            measurements: [
+              {
+                id: "uuid-measurement-1",
+                measurement_date: "2026-07-01T00:00:00.000Z",
+                age_month: 18,
+                body_weight: 9.4,
+                body_height: 74,
+                head_circumference: 45,
+                zscore_bb: -1.2,
+                zscore_tb: -0.8,
+                zscore_lk: null,
+                zscore_gizi: -1.1,
+              },
+            ],
+          },
+        ],
+        total_case: 1,
+      },
+    },
+  },
+
+  "GET /children/clinic/:clinicId/risky": {
+    summary: "Get All Risky Children by Clinic",
+    description:
+      "Retrieve all low risk and high risk children for a specific clinic with the latest measurement (Admin and Cadre only)",
+
+    params: {
+      clinicId: "uuid-clinic-1",
+    },
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter children by name",
+        example: "Ahmad",
+      },
+    },
+
+    response: {
+      success: true,
+      status: "OK",
+      message: "Risky children by clinic retrieved successfully",
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 2,
+      },
+      data: {
+        items: [
+          {
+            id: "uuid-child-1",
+            name: "Ahmad",
+            birth_date: "2025-01-01T00:00:00.000Z",
+            parent_id: "uuid-parent-1",
+            gender: "MALE",
+            address: "Jl. Sudirman No. 5",
+            status: "LOWRISK",
+            parent: {
+              id: "uuid-parent-1",
+              name: "Jane Doe",
+              phone_number: "08123456789",
+            },
+            measurements: [
+              {
+                id: "uuid-measurement-1",
+                measurement_date: "2026-07-01T00:00:00.000Z",
+                age_month: 18,
+                body_weight: 9.4,
+                body_height: 74,
+                head_circumference: 45,
+                zscore_bb: -1.2,
+                zscore_tb: -0.8,
+                zscore_lk: null,
+                zscore_gizi: -1.1,
+              },
+            ],
+          },
+        ],
+        total_case: 2,
+        need_referral: 1,
+      },
+    },
+  },
 };
