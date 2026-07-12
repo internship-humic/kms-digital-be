@@ -51,7 +51,7 @@ class DashboardService extends BaseService {
       orderBy: { measurement_date: "desc" },
       take: 3,
       include: {
-        children: { select: { status: true } },
+        children: { select: { status: true, name: true } },
       },
     });
 
