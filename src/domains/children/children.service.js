@@ -251,7 +251,7 @@ class ChildrenService extends BaseService {
     }
 
     await NotificationService.createNotification({
-      recipient_id: parent_id,
+      recipient_id: existingChildren.parent_id,
       recipient_role: Roles.Parents,
       title: "Profil anak berhasil diubah",
       message: `Profil anak ${existingChildren.name} berhasil diubah.`,
@@ -287,7 +287,7 @@ class ChildrenService extends BaseService {
     });
 
     await NotificationService.createNotification({
-      recipient_id: parent_id,
+      recipient_id: existingChildren.parent_id,
       recipient_role: Roles.Parents,
       title: "Profil anak berhasil dihapus",
       message: `Profil anak ${existingChildren.name} berhasil dihapus.`,
