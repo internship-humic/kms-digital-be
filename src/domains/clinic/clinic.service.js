@@ -11,6 +11,32 @@ class ClinicService extends BaseService {
     // this.db = Prisma
   }
 
+  async notifyAdmins(payload) {
+    const admins = await this.db.admin.findMany({
+      select: {
+        id: true,
+      },
+    });
+
+    if (admins.length === 0) {
+      return [];
+    }
+
+    return await Promise.all(
+      admins.map((admin) =>
+        NotificationService.createNotification({
+          recipient_id: admin.id,
+          recipient_role: Roles.Admin,
+          title: payload.title,
+          message: payload.message,
+          category: payload.category,
+          reference_id: payload.reference_id,
+          reference_type: payload.reference_type,
+        }),
+      ),
+    );
+  }
+
   async getClinicsByVillage(villageId) {
     const clinics = await this.db.clinic.findMany({
       where: { village_id: villageId },
@@ -121,9 +147,7 @@ class ClinicService extends BaseService {
       },
     });
 
-    await NotificationService.createNotification({
-      recipient_id: adminId,
-      recipient_role: Roles.Admin,
+    await this.notifyAdmins({
       title: "Posyandu berhasil dibuat",
       message: `Posyandu ${clinic.name} berhasil ditambahkan.`,
       category: "ANNOUNCEMENT",
@@ -156,9 +180,7 @@ class ClinicService extends BaseService {
       data: info,
     });
 
-    await NotificationService.createNotification({
-      recipient_id: adminId,
-      recipient_role: Roles.Admin,
+    await this.notifyAdmins({
       title: "Posyandu berhasil diubah",
       message: `Posyandu ${clinic.name} berhasil diubah.`,
       category: "ANNOUNCEMENT",
@@ -178,9 +200,7 @@ class ClinicService extends BaseService {
       },
     });
 
-    await NotificationService.createNotification({
-      recipient_id: adminId,
-      recipient_role: Roles.Admin,
+    await this.notifyAdmins({
       title: "Posyandu berhasil dihapus",
       message: `Posyandu ${clinic.name} berhasil dihapus.`,
       category: "ANNOUNCEMENT",
