@@ -439,8 +439,8 @@ class AuthService extends BaseService {
       },
     );
 
-    const resetUrl = FRONTEND_URL
-      ? `${FRONTEND_URL.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(token)}`
+    const resetUrl = process.env.FRONTEND_URL
+      ? `${process.env.FRONTEND_URL.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(token)}`
       : token;
 
     await sendMail({
