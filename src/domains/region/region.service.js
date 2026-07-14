@@ -99,7 +99,7 @@ class RegionService extends BaseService {
     const coveredVillagePercentage =
       totalVillages === 0
         ? 0
-        : Number(((totalCoveredVillages / totalVillages) * 100).toFixed(2));
+        : Number(((totalCoveredVillages / totalVillages) * 100).toFixed(5));
 
     const riskRegions = villages.map((village) => {
       const children = village.clinics.flatMap((clinic) =>
