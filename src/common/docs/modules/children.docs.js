@@ -433,4 +433,34 @@ export default {
       },
     },
   },
+
+  "GET /children/:id/export": {
+    summary: "Export Child Growth Report to PDF",
+    description: "Generates and downloads a beautifully designed PDF growth report containing child details, status, and historical measurements (Parents, Cadres, and Admins).",
+    params: {
+      id: "uuid-child-1"
+    },
+    response: {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "attachment; filename=\"KMS_Digital_Ahmad_2026-07-14.pdf\""
+      },
+      description: "Binary PDF stream containing the growth chart report"
+    }
+  },
+
+  "GET /children/clinic/:clinicId/export": {
+    summary: "Export Clinic Children List to PDF",
+    description: "Generates and downloads a PDF table of all registered children under a specific clinic (Cadre and Admin only).",
+    params: {
+      clinicId: "uuid-clinic-1"
+    },
+    response: {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "attachment; filename=\"Laporan_Posyandu_Mawar_2026-07-14.pdf\""
+      },
+      description: "Binary PDF stream containing the clinic children overview report"
+    }
+  }
 };

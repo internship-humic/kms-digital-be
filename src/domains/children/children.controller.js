@@ -1,5 +1,6 @@
 import ChildrenService from "./children.service.js";
 import BaseController from "../../common/base_classes/base-controller.js";
+import { generateChildReport, generateClinicReport } from "../../utils/pdf-generator.util.js";
 
 class ChildrenController extends BaseController {
   constructor() {
@@ -109,6 +110,38 @@ class ChildrenController extends BaseController {
       data.pagination,
     );
   }
+
+  exportChildPdf = async (req, res) => {
+    const { id } = req.params;
+    const user = req.user;
+
+    const data = await this.service.exportChildPdf(id, user);
+
+    const safeName = data.child.name.replace(/[^a-zA-Z0-9]/g, "_");
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `KMS_Digital_${safeName}_${dateStr}.pdf`;
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    generateChildReport(res, data.child, data.measurements, data.clinic);
+  };
+
+  exportClinicPdf = async (req, res) => {
+    const { clinicId } = req.params;
+    const user = req.user;
+
+    const data = await this.service.exportClinicPdf(clinicId, user);
+
+    const safeClinicName = data.clinic.name.replace(/[^a-zA-Z0-9]/g, "_");
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `Laporan_Posyandu_${safeClinicName}_${dateStr}.pdf`;
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    generateClinicReport(res, data.clinic, data.cadreName, data.childrenList);
+  };
 }
 
 export default new ChildrenController();

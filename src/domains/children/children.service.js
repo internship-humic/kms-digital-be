@@ -1,4 +1,5 @@
 import BaseService from "../../common/base_classes/base-service.js";
+import BaseError from "../../common/base_classes/base-error.js";
 import { calculateAllZScores } from "../../utils/zscore.util.js";
 import calculateAgeInMonths from "../../utils/age.util.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
@@ -396,6 +397,80 @@ class ChildrenService extends BaseService {
     });
 
     return true;
+  }
+
+  async exportChildPdf(childId, user) {
+    const child = await this.db.childrens.findUnique({
+      where: { id: childId },
+      include: {
+        parent: true,
+      },
+    });
+
+    if (!child) {
+      throw BaseError.notFound("Children not found");
+    }
+
+    if (user.role === Roles.Parents) {
+      if (child.parent_id !== user.id) {
+        throw BaseError.forbidden("Access Denied: You can only export your own child's report");
+      }
+    } else if (user.role === Roles.Cadre) {
+      if (child.parent.clinic_id !== user.clinic_id) {
+        throw BaseError.forbidden("Access Denied: Child is not registered in your clinic");
+      }
+    }
+
+    const measurements = await this.db.measurements.findMany({
+      where: { children_id: childId },
+      orderBy: { measurement_date: "desc" },
+    });
+
+    const clinic = await this.db.clinic.findUnique({
+      where: { id: child.parent.clinic_id },
+    });
+
+    return {
+      child,
+      measurements,
+      clinic,
+    };
+  }
+
+  async exportClinicPdf(clinicId, user) {
+    if (user.role === Roles.Cadre) {
+      if (user.clinic_id !== clinicId) {
+        throw BaseError.forbidden("Access Denied: You can only export reports for your own clinic");
+      }
+    }
+
+    const clinic = await this.db.clinic.findUnique({
+      where: { id: clinicId },
+    });
+
+    if (!clinic) {
+      throw BaseError.notFound("Clinic not found");
+    }
+
+    const childrenList = await this.db.childrens.findMany({
+      where: {
+        parent: {
+          clinic_id: clinicId,
+        },
+      },
+      include: {
+        parent: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return {
+      clinic,
+      cadreName: user.name,
+      childrenList,
+    };
   }
 }
 
