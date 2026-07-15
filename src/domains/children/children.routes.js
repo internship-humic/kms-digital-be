@@ -45,7 +45,6 @@ class ChildrenRoutes extends BaseRoutes {
       method: "get",
       path: "/:id/intervention",
       auth: true,
-      roles: [this.roles.Cadre, this.roles.Admin],
       summary: "Get Intervention by Children ID",
       handler: this.controller.getInterventionByChildrenId,
     });
