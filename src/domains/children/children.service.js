@@ -73,6 +73,8 @@ class ChildrenService extends BaseService {
         referral: true,
         supplement: true,
         education: true,
+        created_at: true,
+        updated_at: true,
       },
     });
 
@@ -413,11 +415,15 @@ class ChildrenService extends BaseService {
 
     if (user.role === Roles.Parents) {
       if (child.parent_id !== user.id) {
-        throw BaseError.forbidden("Access Denied: You can only export your own child's report");
+        throw BaseError.forbidden(
+          "Access Denied: You can only export your own child's report",
+        );
       }
     } else if (user.role === Roles.Cadre) {
       if (child.parent.clinic_id !== user.clinic_id) {
-        throw BaseError.forbidden("Access Denied: Child is not registered in your clinic");
+        throw BaseError.forbidden(
+          "Access Denied: Child is not registered in your clinic",
+        );
       }
     }
 
@@ -440,7 +446,9 @@ class ChildrenService extends BaseService {
   async exportClinicPdf(clinicId, user) {
     if (user.role === Roles.Cadre) {
       if (user.clinic_id !== clinicId) {
-        throw BaseError.forbidden("Access Denied: You can only export reports for your own clinic");
+        throw BaseError.forbidden(
+          "Access Denied: You can only export reports for your own clinic",
+        );
       }
     }
 
