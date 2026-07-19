@@ -21,10 +21,7 @@ class ChildrenService extends BaseService {
       status: {
         in: ["LOWRISK", "HIGHRISK"],
       },
-      OR: [
-        { intervention: null },
-        { intervention: { is_intervented: false } },
-      ],
+      OR: [{ intervention: null }, { intervention: { is_intervented: false } }],
     };
 
     const q = (query.search || "").trim();
@@ -78,30 +75,29 @@ class ChildrenService extends BaseService {
 
     const intervention = await this.db.interventions.findUnique({
       where: { children_id: childrenId },
-      select: {
-        id: true,
-        children_id: true,
-        cadre_id: true,
-        is_intervented: true,
-        referral: true,
-        supplement: true,
-        education: true,
-        created_at: true,
-        updated_at: true,
+      include: {
+        cadre: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
-    return intervention ?? {
-      id: null,
-      children_id: childrenId,
-      cadre_id: null,
-      is_intervented: false,
-      referral: false,
-      supplement: false,
-      education: false,
-      created_at: null,
-      updated_at: null,
-    };
+    return (
+      intervention ?? {
+        id: null,
+        children_id: childrenId,
+        cadre_id: null,
+        is_intervented: false,
+        referral: false,
+        supplement: false,
+        education: false,
+        created_at: null,
+        updated_at: null,
+      }
+    );
   }
 
   async updateIntervention(childrenId, payload, cadreId) {
@@ -117,9 +113,15 @@ class ChildrenService extends BaseService {
       where: { children_id: childrenId },
       update: {
         is_intervented: true,
-        ...(payload.referral !== undefined ? { referral: payload.referral } : {}),
-        ...(payload.supplement !== undefined ? { supplement: payload.supplement } : {}),
-        ...(payload.education !== undefined ? { education: payload.education } : {}),
+        ...(payload.referral !== undefined
+          ? { referral: payload.referral }
+          : {}),
+        ...(payload.supplement !== undefined
+          ? { supplement: payload.supplement }
+          : {}),
+        ...(payload.education !== undefined
+          ? { education: payload.education }
+          : {}),
         ...(payload.cadre_id !== undefined ? { cadre_id: cadreId } : {}),
       },
       create: {
@@ -233,10 +235,7 @@ class ChildrenService extends BaseService {
       status: {
         in: ["LOWRISK", "HIGHRISK"],
       },
-      OR: [
-        { intervention: null },
-        { intervention: { is_intervented: false } },
-      ],
+      OR: [{ intervention: null }, { intervention: { is_intervented: false } }],
       measurements: {
         some: {
           clinic_id: clinicId,
