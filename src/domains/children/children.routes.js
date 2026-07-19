@@ -53,7 +53,7 @@ class ChildrenRoutes extends BaseRoutes {
       method: "get",
       path: "/:id/export",
       auth: true,
-      roles: [this.roles.Cadre, this.roles.Admin, this.roles.Parent],
+      roles: [this.roles.Cadre, this.roles.Admin, this.roles.Parents],
       summary: "Export child growth report to PDF",
       handler: this.controller.exportChildPdf,
     });

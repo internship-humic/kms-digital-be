@@ -35,12 +35,28 @@ export const growthChart = (
 
   const maxAge = Math.max(...chartData.map((x) => x.age));
 
-  const maxValue = Math.ceil(Math.max(...chartData.map((x) => x.sd3pos)));
-
   const scaleX = (age) => graphX + (age / maxAge) * graphWidth;
 
+  const minValue = Math.floor(
+    Math.min(
+      ...chartData
+        .map((x) => x.sd3neg)
+        .filter((v) => v != null && !Number.isNaN(v)),
+    ),
+  );
+
+  const maxValue = Math.ceil(
+    Math.max(
+      ...chartData
+        .map((x) => x.sd3pos)
+        .filter((v) => v != null && !Number.isNaN(v)),
+    ),
+  );
+
   const scaleY = (value) =>
-    graphY + graphHeight - (value / maxValue) * graphHeight;
+    graphY +
+    graphHeight -
+    ((value - minValue) / (maxValue - minValue)) * graphHeight;
 
   doc
     .roundedRect(x, y, width, height, 8)
@@ -67,7 +83,9 @@ export const growthChart = (
     .lineTo(graphX + graphWidth, graphY + graphHeight)
     .stroke();
 
-  for (let i = 0; i <= maxValue; i++) {
+  const step = maxValue - minValue > 40 ? 5 : maxValue - minValue > 20 ? 2 : 1;
+
+  for (let i = minValue; i <= maxValue; i += step) {
     const py = scaleY(i);
 
     doc
@@ -133,28 +151,29 @@ export const growthChart = (
   drawCurve("sd3pos", "#d32f2f");
 
   const points = measurements
-    .filter((m) => m.age_month != null && m[valueKey] != null)
-    .sort((a, b) => a.age_month - b.age_month);
+    .map((m) => ({
+      age: Number(m.age_month),
+      value: Number(m[valueKey]),
+    }))
+    .filter((m) => !Number.isNaN(m.age) && !Number.isNaN(m.value))
+    .sort((a, b) => a.age - b.age);
 
   doc.strokeColor("#1565c0").lineWidth(2);
 
   points.forEach((point, index) => {
-    const px = scaleX(point.age_month);
-    const py = scaleY(point[valueKey]);
+    const px = scaleX(point.age);
+    const py = scaleY(point.value);
 
     if (index > 0) {
       const prev = points[index - 1];
 
-      doc
-        .moveTo(scaleX(prev.age_month), scaleY(prev[valueKey]))
-        .lineTo(px, py)
-        .stroke();
+      doc.moveTo(scaleX(prev.age), scaleY(prev.value)).lineTo(px, py).stroke();
     }
 
     doc
       .circle(px, py, 2.5)
       .fill("#1565c0")
-      .strokeColor("#ffffff")
+      .strokeColor("#1565c0")
       .lineWidth(0.5)
       .stroke();
   });
