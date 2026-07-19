@@ -259,11 +259,11 @@ export const generateChildReport = (stream, child, measurements, clinic) => {
   doc.font("Helvetica").fontSize(8);
 
   let interventionText = "Tidak ada intervensi aktif";
-  if (child.is_intervented) {
+  if (child.intervention?.is_intervented) {
     const list = [];
-    if (child.referral) list.push("Rujukan");
-    if (child.supplement) list.push("Suplemen");
-    if (child.education) list.push("Edukasi");
+    if (child.intervention.referral) list.push("Rujukan");
+    if (child.intervention.supplement) list.push("Suplemen");
+    if (child.intervention.education) list.push("Edukasi");
     interventionText = `Intervensi: ${list.join(", ") || "Terpantau"}`;
   }
   doc.text(interventionText, box2X + 12, gridY + 62, { width: gridW - 24 });

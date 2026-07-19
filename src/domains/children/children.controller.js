@@ -1,6 +1,9 @@
 import ChildrenService from "./children.service.js";
 import BaseController from "../../common/base_classes/base-controller.js";
-import { generateChildReport, generateClinicReport } from "../../utils/pdf-generator.util.js";
+import {
+  generateChildReport,
+  generateClinicReport,
+} from "../../utils/pdf-generator.util.js";
 
 class ChildrenController extends BaseController {
   constructor() {
@@ -34,7 +37,8 @@ class ChildrenController extends BaseController {
   async updateIntervention(req, res) {
     const { id } = req.params;
     const payload = req.body;
-    const data = await this.service.updateIntervention(id, payload);
+    const cadreId = req.user.id;
+    const data = await this.service.updateIntervention(id, payload, cadreId);
     return this.response.success(
       res,
       data,

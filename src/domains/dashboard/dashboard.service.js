@@ -50,7 +50,10 @@ class DashboardService extends BaseService {
         status: {
           in: ["LOWRISK", "HIGHRISK"],
         },
-        is_intervented: false,
+        OR: [
+          { intervention: null },
+          { intervention: { is_intervented: false } },
+        ],
       },
     });
 
@@ -80,7 +83,10 @@ class DashboardService extends BaseService {
         status: {
           in: ["LOWRISK", "HIGHRISK"],
         },
-        is_intervented: false,
+        OR: [
+          { intervention: null },
+          { intervention: { is_intervented: false } },
+        ],
       },
     });
     const totalNormalChildren = await this.db.childrens.count({

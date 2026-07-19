@@ -186,10 +186,25 @@ class MeasurementService extends BaseService {
         },
         data: {
           status,
+        },
+      });
+
+      await tx.interventions.upsert({
+        where: { children_id: children.id },
+        update: {
           is_intervented: false,
           referral: false,
           supplement: false,
           education: false,
+          cadre_id: null,
+        },
+        create: {
+          children_id: children.id,
+          is_intervented: false,
+          referral: false,
+          supplement: false,
+          education: false,
+          cadre_id: null,
         },
       });
 
@@ -259,10 +274,25 @@ class MeasurementService extends BaseService {
         },
         data: {
           status,
+        },
+      });
+
+      await tx.interventions.upsert({
+        where: { children_id: children.id },
+        update: {
           is_intervented: false,
           referral: false,
           supplement: false,
           education: false,
+          cadre_id: null,
+        },
+        create: {
+          children_id: children.id,
+          is_intervented: false,
+          referral: false,
+          supplement: false,
+          education: false,
+          cadre_id: null,
         },
       });
 

@@ -83,7 +83,11 @@ class RegionService extends BaseService {
                     children: {
                       select: {
                         status: true,
-                        is_intervented: true,
+                        intervention: {
+                          select: {
+                            is_intervented: true,
+                          },
+                        },
                       },
                     },
                   },
@@ -111,7 +115,7 @@ class RegionService extends BaseService {
       const riskyChildren = children.filter(
         (child) =>
           ["LOWRISK", "HIGHRISK"].includes(child.status) &&
-          !child.is_intervented,
+          !child.intervention?.is_intervented,
       ).length;
 
       const percentage =

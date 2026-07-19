@@ -154,7 +154,7 @@ export default {
 
   "GET /children/:id/intervention": {
     summary: "Get Intervention by Children ID",
-    description: "Retrieve intervention flags for a child",
+    description: "Retrieve intervention record for a child",
 
     params: {
       id: "uuid-child-1",
@@ -166,10 +166,15 @@ export default {
       message: "Intervention retrieved successfully",
       pagination: null,
       data: {
-        id: "uuid-child-1",
+        id: "uuid-intervention-1",
+        children_id: "uuid-child-1",
+        cadre_id: "uuid-cadre-1",
+        is_intervented: true,
         referral: false,
         supplement: true,
         education: false,
+        created_at: "2026-07-01T00:00:00.000Z",
+        updated_at: "2026-07-19T00:00:00.000Z",
       },
     },
   },
@@ -241,7 +246,7 @@ export default {
 
   "PATCH /children/:id/intervention": {
     summary: "Update Intervention",
-    description: "Patch one or more intervention flags for a child",
+    description: "Patch one or more intervention flags for a child. Providing cadre_id records which cadre managed the intervention.",
 
     params: {
       id: "uuid-child-1",
@@ -258,7 +263,10 @@ export default {
       message: "Intervention updated successfully",
       pagination: null,
       data: {
-        id: "uuid-child-1",
+        id: "uuid-intervention-1",
+        children_id: "uuid-child-1",
+        cadre_id: "uuid-cadre-1",
+        is_intervented: true,
         referral: true,
         supplement: false,
         education: true,

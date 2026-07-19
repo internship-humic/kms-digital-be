@@ -21,7 +21,10 @@ class ChildrenService extends BaseService {
       status: {
         in: ["LOWRISK", "HIGHRISK"],
       },
-      is_intervented: false,
+      OR: [
+        { intervention: null },
+        { intervention: { is_intervented: false } },
+      ],
     };
 
     const q = (query.search || "").trim();
@@ -67,8 +70,18 @@ class ChildrenService extends BaseService {
   async getInterventionByChildrenId(childrenId) {
     const children = await this.db.childrens.findUnique({
       where: { id: childrenId },
+    });
+
+    if (!children) {
+      throw this.error.notFound("Children not found");
+    }
+
+    const intervention = await this.db.interventions.findUnique({
+      where: { children_id: childrenId },
       select: {
         id: true,
+        children_id: true,
+        cadre_id: true,
         is_intervented: true,
         referral: true,
         supplement: true,
@@ -78,14 +91,20 @@ class ChildrenService extends BaseService {
       },
     });
 
-    if (!children) {
-      throw this.error.notFound("Children not found");
-    }
-
-    return children;
+    return intervention ?? {
+      id: null,
+      children_id: childrenId,
+      cadre_id: null,
+      is_intervented: false,
+      referral: false,
+      supplement: false,
+      education: false,
+      created_at: null,
+      updated_at: null,
+    };
   }
 
-  async updateIntervention(childrenId, payload) {
+  async updateIntervention(childrenId, payload, cadreId) {
     const existingChildren = await this.db.childrens.findUnique({
       where: { id: childrenId },
     });
@@ -94,22 +113,27 @@ class ChildrenService extends BaseService {
       throw this.error.notFound("Children not found");
     }
 
-    const updated = await this.db.childrens.update({
-      where: { id: childrenId },
-      data: {
+    const updated = await this.db.interventions.upsert({
+      where: { children_id: childrenId },
+      update: {
         is_intervented: true,
-        ...(payload.referral !== undefined
-          ? { referral: payload.referral }
-          : {}),
-        ...(payload.supplement !== undefined
-          ? { supplement: payload.supplement }
-          : {}),
-        ...(payload.education !== undefined
-          ? { education: payload.education }
-          : {}),
+        ...(payload.referral !== undefined ? { referral: payload.referral } : {}),
+        ...(payload.supplement !== undefined ? { supplement: payload.supplement } : {}),
+        ...(payload.education !== undefined ? { education: payload.education } : {}),
+        ...(payload.cadre_id !== undefined ? { cadre_id: cadreId } : {}),
+      },
+      create: {
+        children_id: childrenId,
+        is_intervented: true,
+        referral: payload.referral ?? false,
+        supplement: payload.supplement ?? false,
+        education: payload.education ?? false,
+        cadre_id: cadreId ?? null,
       },
       select: {
         id: true,
+        children_id: true,
+        cadre_id: true,
         is_intervented: true,
         referral: true,
         supplement: true,
@@ -209,7 +233,10 @@ class ChildrenService extends BaseService {
       status: {
         in: ["LOWRISK", "HIGHRISK"],
       },
-      is_intervented: false,
+      OR: [
+        { intervention: null },
+        { intervention: { is_intervented: false } },
+      ],
       measurements: {
         some: {
           clinic_id: clinicId,
@@ -406,6 +433,7 @@ class ChildrenService extends BaseService {
       where: { id: childId },
       include: {
         parent: true,
+        intervention: true,
       },
     });
 
