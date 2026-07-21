@@ -9,19 +9,11 @@ class NotificationService extends BaseService {
 
   async getAllNotifications(query, user) {
     const { page, limit, offset } = getPagination(query);
-    const filter = {};
 
-    if (user.role !== Roles.Admin) {
-      filter.recipient_id = user.id;
-      filter.recipient_role = user.role;
-    } else {
-      if (query.recipient_id) {
-        filter.recipient_id = query.recipient_id;
-      }
-      if (query.recipient_role) {
-        filter.recipient_role = query.recipient_role;
-      }
-    }
+    const filter = {
+      recipient_id: user.id,
+      recipient_role: user.role,
+    };
 
     if (query.is_read !== undefined) {
       filter.is_read = query.is_read === "true" || query.is_read === true;
@@ -61,13 +53,11 @@ class NotificationService extends BaseService {
       throw this.error.notFound("Notification not found");
     }
 
-    if (user.role !== Roles.Admin) {
-      if (
-        notification.recipient_id !== user.id ||
-        notification.recipient_role !== user.role
-      ) {
-        throw this.error.forbidden("Access denied to this notification");
-      }
+    if (
+      notification.recipient_id !== user.id ||
+      notification.recipient_role !== user.role
+    ) {
+      throw this.error.forbidden("Access denied to this notification");
     }
 
     return notification;
@@ -114,25 +104,17 @@ class NotificationService extends BaseService {
   }
 
   async updateNotification(id, info, user) {
-    const notification = await this.getNotificationById(id, user);
+    await this.getNotificationById(id, user);
 
-    let updateData = {};
-
-    if (user.role !== Roles.Admin) {
-      if (info.is_read !== undefined) {
-        updateData.is_read = info.is_read;
-      } else {
-        throw this.error.badRequest(
-          "Only 'is_read' field can be updated by non-admin",
-        );
-      }
-    } else {
-      updateData = { ...info };
+    if (info.is_read === undefined) {
+      throw this.error.badRequest("Only 'is_read' field can be updated");
     }
 
     return await this.db.notification.update({
       where: { id },
-      data: updateData,
+      data: {
+        is_read: info.is_read,
+      },
     });
   }
 

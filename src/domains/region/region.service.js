@@ -1,5 +1,6 @@
 import BaseService from "../../common/base_classes/base-service.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
+import { ORMfilterable } from "../../utils/query.util.js";
 
 class RegionService extends BaseService {
   constructor() {
@@ -44,14 +45,20 @@ class RegionService extends BaseService {
   }
 
   async getCoveredRegions(query) {
-    const page = Number(query?.page) || 1;
-    const limit = 10;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = getPagination(query);
 
-    const coveredVillageWhere = {
-      clinics: {
-        some: {},
-      },
+    const filter = ORMfilterable(query, ["name"]) || {};
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = {
+        contains: q,
+        mode: "insensitive",
+      };
+    }
+
+    filter.clinics = {
+      some: {},
     };
 
     const [totalVillages, totalCoveredVillages, villages] =
@@ -59,11 +66,11 @@ class RegionService extends BaseService {
         this.db.village.count(),
 
         this.db.village.count({
-          where: coveredVillageWhere,
+          where: filter,
         }),
 
         this.db.village.findMany({
-          where: coveredVillageWhere,
+          where: filter,
           skip: offset,
           take: limit,
           orderBy: {
