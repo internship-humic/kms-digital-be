@@ -47,7 +47,16 @@ class RegionService extends BaseService {
   async getCoveredRegions(query) {
     const { page, limit, offset } = getPagination(query);
 
-    const filter = ORMfilterable(query, ["name"]) || {};
+    const coverageFilter = {
+      clinics: {
+        some: {},
+      },
+    };
+
+    const filter = {
+      ...coverageFilter,
+      ...(ORMfilterable(query, ["name"]) || {}),
+    };
 
     const q = (query.search || "").trim();
     if (q) {
@@ -57,43 +66,46 @@ class RegionService extends BaseService {
       };
     }
 
-    filter.clinics = {
-      some: {},
-    };
+    const [
+      totalVillages,
+      totalCoveredVillages,
+      totalFilteredCoveredVillages,
+      villages,
+    ] = await this.db.$transaction([
+      this.db.village.count(),
 
-    const [totalVillages, totalCoveredVillages, villages] =
-      await this.db.$transaction([
-        this.db.village.count(),
+      this.db.village.count({
+        where: coverageFilter,
+      }),
 
-        this.db.village.count({
-          where: filter,
-        }),
+      this.db.village.count({
+        where: filter,
+      }),
 
-        this.db.village.findMany({
-          where: filter,
-          skip: offset,
-          take: limit,
-          orderBy: {
-            name: "asc",
-          },
-          include: {
-            district: {
-              select: {
-                id: true,
-                name: true,
-              },
+      this.db.village.findMany({
+        where: filter,
+        skip: offset,
+        take: limit,
+        orderBy: {
+          name: "asc",
+        },
+        include: {
+          district: {
+            select: {
+              id: true,
+              name: true,
             },
-            clinics: {
-              include: {
-                parents: {
-                  include: {
-                    children: {
-                      select: {
-                        status: true,
-                        intervention: {
-                          select: {
-                            is_intervented: true,
-                          },
+          },
+          clinics: {
+            include: {
+              parents: {
+                include: {
+                  children: {
+                    select: {
+                      status: true,
+                      intervention: {
+                        select: {
+                          is_intervented: true,
                         },
                       },
                     },
@@ -102,8 +114,9 @@ class RegionService extends BaseService {
               },
             },
           },
-        }),
-      ]);
+        },
+      }),
+    ]);
 
     const uncoveredVillages = totalVillages - totalCoveredVillages;
 
@@ -160,7 +173,7 @@ class RegionService extends BaseService {
         },
         riskRegions,
       },
-      pagination: getMeta(totalCoveredVillages, page, limit),
+      pagination: getMeta(totalFilteredCoveredVillages, page, limit),
     };
   }
 }
