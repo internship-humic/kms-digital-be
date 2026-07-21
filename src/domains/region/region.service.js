@@ -66,46 +66,37 @@ class RegionService extends BaseService {
       };
     }
 
-    const [
-      totalVillages,
-      totalCoveredVillages,
-      totalFilteredCoveredVillages,
-      villages,
-    ] = await this.db.$transaction([
-      this.db.village.count(),
+    const [totalVillages, totalCoveredVillages, villages] =
+      await this.db.$transaction([
+        this.db.village.count(),
 
-      this.db.village.count({
-        where: coverageFilter,
-      }),
+        this.db.village.count({
+          where: coverageFilter,
+        }),
 
-      this.db.village.count({
-        where: filter,
-      }),
-
-      this.db.village.findMany({
-        where: filter,
-        skip: offset,
-        take: limit,
-        orderBy: {
-          name: "asc",
-        },
-        include: {
-          district: {
-            select: {
-              id: true,
-              name: true,
-            },
+        this.db.village.findMany({
+          where: filter,
+          orderBy: {
+            name: "asc",
           },
-          clinics: {
-            include: {
-              parents: {
-                include: {
-                  children: {
-                    select: {
-                      status: true,
-                      intervention: {
-                        select: {
-                          is_intervented: true,
+          include: {
+            district: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            clinics: {
+              include: {
+                parents: {
+                  include: {
+                    children: {
+                      select: {
+                        status: true,
+                        intervention: {
+                          select: {
+                            is_intervented: true,
+                          },
                         },
                       },
                     },
@@ -114,9 +105,8 @@ class RegionService extends BaseService {
               },
             },
           },
-        },
-      }),
-    ]);
+        }),
+      ]);
 
     const uncoveredVillages = totalVillages - totalCoveredVillages;
 
@@ -125,7 +115,7 @@ class RegionService extends BaseService {
         ? 0
         : Number(((totalCoveredVillages / totalVillages) * 100).toFixed(5));
 
-    const riskRegions = villages.map((village) => {
+    let riskRegions = villages.map((village) => {
       const children = village.clinics.flatMap((clinic) =>
         clinic.parents.flatMap((parent) => parent.children),
       );
@@ -163,6 +153,30 @@ class RegionService extends BaseService {
       };
     });
 
+    if (query.risk) {
+      riskRegions = riskRegions.filter(
+        (item) => item.label === query.risk.toUpperCase(),
+      );
+    }
+
+    const minPercentage = Number(query.minPercentage);
+    if (!Number.isNaN(minPercentage)) {
+      riskRegions = riskRegions.filter(
+        (item) => item.percentage >= minPercentage,
+      );
+    }
+
+    const maxPercentage = Number(query.maxPercentage);
+    if (!Number.isNaN(maxPercentage)) {
+      riskRegions = riskRegions.filter(
+        (item) => item.percentage <= maxPercentage,
+      );
+    }
+
+    const total = riskRegions.length;
+
+    riskRegions = riskRegions.slice(offset, offset + limit);
+
     return {
       data: {
         coverage: {
@@ -173,7 +187,7 @@ class RegionService extends BaseService {
         },
         riskRegions,
       },
-      pagination: getMeta(totalFilteredCoveredVillages, page, limit),
+      pagination: getMeta(total, page, limit),
     };
   }
 }
