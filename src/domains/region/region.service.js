@@ -1,5 +1,6 @@
 import BaseService from "../../common/base_classes/base-service.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
+import { ORMfilterable } from "../../utils/query.util.js";
 
 class RegionService extends BaseService {
   constructor() {
@@ -44,28 +45,37 @@ class RegionService extends BaseService {
   }
 
   async getCoveredRegions(query) {
-    const page = Number(query?.page) || 1;
-    const limit = 10;
-    const offset = (page - 1) * limit;
+    const { page, limit, offset } = getPagination(query);
 
-    const coveredVillageWhere = {
+    const coverageFilter = {
       clinics: {
         some: {},
       },
     };
+
+    const filter = {
+      ...coverageFilter,
+      ...(ORMfilterable(query, ["name"]) || {}),
+    };
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = {
+        contains: q,
+        mode: "insensitive",
+      };
+    }
 
     const [totalVillages, totalCoveredVillages, villages] =
       await this.db.$transaction([
         this.db.village.count(),
 
         this.db.village.count({
-          where: coveredVillageWhere,
+          where: coverageFilter,
         }),
 
         this.db.village.findMany({
-          where: coveredVillageWhere,
-          skip: offset,
-          take: limit,
+          where: filter,
           orderBy: {
             name: "asc",
           },
@@ -83,7 +93,11 @@ class RegionService extends BaseService {
                     children: {
                       select: {
                         status: true,
-                        is_intervented: true,
+                        intervention: {
+                          select: {
+                            is_intervented: true,
+                          },
+                        },
                       },
                     },
                   },
@@ -99,9 +113,9 @@ class RegionService extends BaseService {
     const coveredVillagePercentage =
       totalVillages === 0
         ? 0
-        : Number(((totalCoveredVillages / totalVillages) * 100).toFixed(2));
+        : Number(((totalCoveredVillages / totalVillages) * 100).toFixed(5));
 
-    const riskRegions = villages.map((village) => {
+    let riskRegions = villages.map((village) => {
       const children = village.clinics.flatMap((clinic) =>
         clinic.parents.flatMap((parent) => parent.children),
       );
@@ -111,7 +125,7 @@ class RegionService extends BaseService {
       const riskyChildren = children.filter(
         (child) =>
           ["LOWRISK", "HIGHRISK"].includes(child.status) &&
-          !child.is_intervented,
+          !child.intervention?.is_intervented,
       ).length;
 
       const percentage =
@@ -139,6 +153,30 @@ class RegionService extends BaseService {
       };
     });
 
+    if (query.risk) {
+      riskRegions = riskRegions.filter(
+        (item) => item.label === query.risk.toUpperCase(),
+      );
+    }
+
+    const minPercentage = Number(query.minPercentage);
+    if (!Number.isNaN(minPercentage)) {
+      riskRegions = riskRegions.filter(
+        (item) => item.percentage >= minPercentage,
+      );
+    }
+
+    const maxPercentage = Number(query.maxPercentage);
+    if (!Number.isNaN(maxPercentage)) {
+      riskRegions = riskRegions.filter(
+        (item) => item.percentage <= maxPercentage,
+      );
+    }
+
+    const total = riskRegions.length;
+
+    riskRegions = riskRegions.slice(offset, offset + limit);
+
     return {
       data: {
         coverage: {
@@ -149,7 +187,7 @@ class RegionService extends BaseService {
         },
         riskRegions,
       },
-      pagination: getMeta(totalCoveredVillages, page, limit),
+      pagination: getMeta(total, page, limit),
     };
   }
 }

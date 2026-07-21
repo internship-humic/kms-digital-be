@@ -11,7 +11,6 @@ class ArticleController extends BaseController {
 
   async getAllArticles(req, res) {
     const query = req.query;
-
     const data = await this.service.getAllArticles(query);
 
     return this.response.success(
@@ -24,7 +23,6 @@ class ArticleController extends BaseController {
 
   async getArticleById(req, res) {
     const { id } = req.params;
-
     const data = await this.service.getArticleById(id);
 
     return this.response.success(res, data, "Article retrieved successfully");
@@ -42,16 +40,15 @@ class ArticleController extends BaseController {
   async updateArticle(req, res) {
     const { id } = req.params;
     const info = req.body;
-    const file = req.file;
+    const files = req.files;
 
-    const data = await this.service.updateArticle(id, info, file);
+    const data = await this.service.updateArticle(id, info, files);
 
     return this.response.success(res, data, "Article updated successfully");
   }
 
   async deleteArticle(req, res) {
     const { id } = req.params;
-
     const data = await this.service.deleteArticle(id);
 
     return this.response.success(res, data, "Article deleted successfully");
@@ -59,8 +56,7 @@ class ArticleController extends BaseController {
 
   async uploadContentImage(req, res) {
     const file = req.file;
-
-    const data = await this.service.uploadContentImage(file);
+    const data = await this.service.uploadImage(file);
 
     return this.response.created(res, data, "Image uploaded successfully");
   }

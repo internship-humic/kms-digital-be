@@ -45,9 +45,17 @@ class ChildrenRoutes extends BaseRoutes {
       method: "get",
       path: "/:id/intervention",
       auth: true,
-      roles: [this.roles.Cadre, this.roles.Admin],
       summary: "Get Intervention by Children ID",
       handler: this.controller.getInterventionByChildrenId,
+    });
+
+    this.register({
+      method: "get",
+      path: "/:id/export",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin, this.roles.Parents],
+      summary: "Export child growth report to PDF",
+      handler: this.controller.exportChildPdf,
     });
 
     this.register({
@@ -87,6 +95,33 @@ class ChildrenRoutes extends BaseRoutes {
       roles: [this.roles.Cadre, this.roles.Admin],
       summary: "Delete Child by ID",
       handler: this.controller.deleteChildren,
+    });
+
+    this.register({
+      method: "get",
+      path: "/clinic/:clinicId",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Get All Children by Clinic",
+      handler: this.controller.getAllChildrenByClinic,
+    });
+
+    this.register({
+      method: "get",
+      path: "/clinic/:clinicId/risky",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Get All Risky Children by Clinic",
+      handler: this.controller.getAllRiskyChildrenByClinic,
+    });
+
+    this.register({
+      method: "get",
+      path: "/clinic/:clinicId/export",
+      auth: true,
+      roles: [this.roles.Cadre, this.roles.Admin],
+      summary: "Export all children in clinic to PDF",
+      handler: this.controller.exportClinicPdf,
     });
   }
 }

@@ -42,10 +42,6 @@ class ArticleRoutes extends BaseRoutes {
             name: "cover_image",
             maxCount: 1,
           },
-          {
-            name: "content_images",
-            maxCount: 20,
-          },
         ]),
       ],
       schema: createArticleSchema,
@@ -63,10 +59,6 @@ class ArticleRoutes extends BaseRoutes {
           {
             name: "cover_image",
             maxCount: 1,
-          },
-          {
-            name: "content_images",
-            maxCount: 20,
           },
         ]),
       ],

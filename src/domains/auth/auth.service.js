@@ -389,7 +389,7 @@ class AuthService extends BaseService {
   async requestPasswordReset(body) {
     const { email } = body;
 
-    if (!RESET_PASSWORD_SECRET) {
+    if (!process.env.RESET_PASSWORD_SECRET) {
       throw this.error.badRequest("RESET_PASSWORD_SECRET is not configured");
     }
 
@@ -433,14 +433,14 @@ class AuthService extends BaseService {
         role,
         email: user.email,
       },
-      RESET_PASSWORD_SECRET,
+      process.env.RESET_PASSWORD_SECRET,
       {
-        expiresIn: RESET_PASSWORD_EXPIRES_IN,
+        expiresIn: process.env.RESET_PASSWORD_EXPIRES_IN,
       },
     );
 
-    const resetUrl = FRONTEND_URL
-      ? `${FRONTEND_URL.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(token)}`
+    const resetUrl = process.env.FRONTEND_URL
+      ? `${process.env.FRONTEND_URL.replace(/\/$/, "")}/reset-password?token=${encodeURIComponent(token)}`
       : token;
 
     await sendMail({
@@ -477,14 +477,14 @@ class AuthService extends BaseService {
 
   async resetPassword(body) {
     const { token, new_password } = body;
-    if (!RESET_PASSWORD_SECRET) {
+    if (!process.env.RESET_PASSWORD_SECRET) {
       throw this.error.badRequest("RESET_PASSWORD_SECRET is not configured");
     }
 
     let payload;
 
     try {
-      payload = jwt.verify(token, RESET_PASSWORD_SECRET);
+      payload = jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
     } catch {
       throw this.error.forbidden("Reset password token is invalid or expired");
     }

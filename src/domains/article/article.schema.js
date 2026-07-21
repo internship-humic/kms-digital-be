@@ -15,9 +15,8 @@ const createArticleSchema = Joi.object({
     "string.empty": "Description is required.",
   }),
 
-  content: Joi.object().required().messages({
-    "any.required": "Content is required.",
-    "object.base": "Content must be a valid JSON object.",
+  content: Joi.string().required().messages({
+    "string.empty": "Content is required.",
   }),
 
   writer_name: Joi.string().required().messages({
@@ -40,9 +39,8 @@ const updateArticleSchema = Joi.object({
     "string.empty": "Description cannot be empty.",
   }),
 
-  content: Joi.object().required().messages({
-    "any.required": "Content is required.",
-    "object.base": "Content must be a valid JSON object.",
+  content: Joi.string().messages({
+    "string.empty": "Content cannot be empty.",
   }),
 
   writer_name: Joi.string().messages({

@@ -80,16 +80,13 @@ model Childrens {
   gender         Gender
   address        String
   status         Childrentatus?
-  is_intervented Boolean        @default(false)
-  referral       Boolean        @default(false)
-  supplement     Boolean        @default(false)
-  education      Boolean        @default(false)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   parent       Parents        @relation(fields: [parent_id], references: [id], onDelete: Cascade)
   measurements Measurements[]
+  intervention Interventions?
 
   @@map("childrens")
 }
@@ -123,17 +120,36 @@ model Measurements {
 }
 
 model Cadre {
-  id         String   @id @default(uuid())
-  name       String
-  email      String   @unique
-  password   String
-  clinic_id  String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id            String          @id @default(uuid())
+  name          String
+  email         String          @unique
+  password      String
+  clinic_id     String
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
 
-  clinic Clinic @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+  clinic        Clinic          @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+  interventions Interventions[]
 
   @@map("cadres")
+}
+
+model Interventions {
+  id             String   @id @default(uuid())
+  children_id    String   @unique
+  cadre_id       String?
+  is_intervented Boolean  @default(false)
+  referral       Boolean  @default(false)
+  supplement     Boolean  @default(false)
+  education      Boolean  @default(false)
+
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  children       Childrens @relation(fields: [children_id], references: [id], onDelete: Cascade)
+  cadre          Cadre?    @relation(fields: [cadre_id], references: [id], onDelete: SetNull)
+
+  @@map("interventions")
 }
 
 model Province {
@@ -245,4 +261,3 @@ model Notification {
 
   @@map("notifications")
 }
-

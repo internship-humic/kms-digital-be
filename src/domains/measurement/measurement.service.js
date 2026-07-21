@@ -1,7 +1,7 @@
 import BaseService from "../../common/base_classes/base-service.js";
 
 import calculateAgeInMonths from "../../utils/age.util.js";
-import calculateRiskStatus from "../../utils/risk-status.util.js";
+import { calculateRiskStatus } from "../../utils/risk-status.util.js";
 import { calculateAllZScores } from "../../utils/zscore.util.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
 import { ORMfilterable } from "../../utils/query.util.js";
@@ -138,10 +138,10 @@ class MeasurementService extends BaseService {
     };
   }
 
-  async createMeasurement(childrenId, body) {
-    const children = await this.findChildren(childrenId);
-
+  async createMeasurement(body) {
     const measurementDate = new Date(body.measurement_date);
+
+    const children = await this.findChildren(body.children_id);
 
     const ageMonth = calculateAgeInMonths(children.birth_date, measurementDate);
 
@@ -186,10 +186,25 @@ class MeasurementService extends BaseService {
         },
         data: {
           status,
+        },
+      });
+
+      await tx.interventions.upsert({
+        where: { children_id: children.id },
+        update: {
           is_intervented: false,
           referral: false,
           supplement: false,
           education: false,
+          cadre_id: null,
+        },
+        create: {
+          children_id: children.id,
+          is_intervented: false,
+          referral: false,
+          supplement: false,
+          education: false,
+          cadre_id: null,
         },
       });
 
@@ -259,10 +274,25 @@ class MeasurementService extends BaseService {
         },
         data: {
           status,
+        },
+      });
+
+      await tx.interventions.upsert({
+        where: { children_id: children.id },
+        update: {
           is_intervented: false,
           referral: false,
           supplement: false,
           education: false,
+          cadre_id: null,
+        },
+        create: {
+          children_id: children.id,
+          is_intervented: false,
+          referral: false,
+          supplement: false,
+          education: false,
+          cadre_id: null,
         },
       });
 
@@ -285,6 +315,9 @@ class MeasurementService extends BaseService {
       const measurement = await tx.measurements.findUnique({
         where: {
           id,
+        },
+        include: {
+          children: true,
         },
       });
 
@@ -323,7 +356,7 @@ class MeasurementService extends BaseService {
       });
 
       await NotificationService.createNotification({
-        recipient_id: children.parent_id,
+        recipient_id: measurement.children.parent_id,
         recipient_role: Roles.Parents,
         title: "Pengukuran baru berhasil dihapus",
         message:

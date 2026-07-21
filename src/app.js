@@ -8,12 +8,20 @@ import logger from "./utils/logger.util.js";
 import path from "path";
 import http from "http";
 import setupSwagger from "./common/docs/swagger.js";
+// import cors from "cors";
 
 class ExpressApplication {
   constructor(port) {
     this.port = port;
     this.app = express();
     this.setupMiddleware();
+    // Untuk Testing Tip Tap Editor
+    // this.app.use(
+    //   cors({
+    //     origin: "http://localhost:5173",
+    //   }),
+    // );
+    // this.app.options("*splat", cors());
     this.setupRoutes(routes);
     this.setupErrorHandler();
   }

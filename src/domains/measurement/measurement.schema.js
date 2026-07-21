@@ -1,11 +1,7 @@
 import Joi from "joi";
 
 const measurementSchema = Joi.object({
-  children_id: Joi.string()
-    .guid({
-      version: ["uuidv4", "uuidv5"],
-    })
-    .required(),
+  children_id: Joi.string().required(),
 
   clinic_id: Joi.string().required(),
 

@@ -8,10 +8,18 @@ class DashboardService extends BaseService {
   }
 
   async getParentDashboard(parentId) {
-    return await this.db.childrens.findMany({
+    const childrens = await this.db.childrens.findMany({
       where: { parent_id: parentId },
       orderBy: { created_at: "desc" },
+      include: {
+        measurements: {
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
     });
+
+    return childrens;
   }
 
   async getCadreDashboard(cadreId, clinicId) {
@@ -42,7 +50,10 @@ class DashboardService extends BaseService {
         status: {
           in: ["LOWRISK", "HIGHRISK"],
         },
-        is_intervented: false,
+        OR: [
+          { intervention: null },
+          { intervention: { is_intervented: false } },
+        ],
       },
     });
 
@@ -51,7 +62,7 @@ class DashboardService extends BaseService {
       orderBy: { measurement_date: "desc" },
       take: 3,
       include: {
-        children: { select: { status: true } },
+        children: { select: { status: true, name: true } },
       },
     });
 
@@ -72,7 +83,10 @@ class DashboardService extends BaseService {
         status: {
           in: ["LOWRISK", "HIGHRISK"],
         },
-        is_intervented: false,
+        OR: [
+          { intervention: null },
+          { intervention: { is_intervented: false } },
+        ],
       },
     });
     const totalNormalChildren = await this.db.childrens.count({

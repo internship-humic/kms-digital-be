@@ -1,4 +1,5 @@
 import BaseService from "../../common/base_classes/base-service.js";
+import BaseError from "../../common/base_classes/base-error.js";
 import { calculateAllZScores } from "../../utils/zscore.util.js";
 import calculateAgeInMonths from "../../utils/age.util.js";
 import { getPagination, getMeta } from "../../utils/pagination.util.js";
@@ -20,7 +21,7 @@ class ChildrenService extends BaseService {
       status: {
         in: ["LOWRISK", "HIGHRISK"],
       },
-      is_intervented: false,
+      OR: [{ intervention: null }, { intervention: { is_intervented: false } }],
     };
 
     const q = (query.search || "").trim();
@@ -66,23 +67,40 @@ class ChildrenService extends BaseService {
   async getInterventionByChildrenId(childrenId) {
     const children = await this.db.childrens.findUnique({
       where: { id: childrenId },
-      select: {
-        id: true,
-        is_intervented: true,
-        referral: true,
-        supplement: true,
-        education: true,
-      },
     });
 
     if (!children) {
       throw this.error.notFound("Children not found");
     }
 
-    return children;
+    const intervention = await this.db.interventions.findUnique({
+      where: { children_id: childrenId },
+      include: {
+        cadre: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return (
+      intervention ?? {
+        id: null,
+        children_id: childrenId,
+        cadre_id: null,
+        is_intervented: false,
+        referral: false,
+        supplement: false,
+        education: false,
+        created_at: null,
+        updated_at: null,
+      }
+    );
   }
 
-  async updateIntervention(childrenId, payload) {
+  async updateIntervention(childrenId, payload, cadreId) {
     const existingChildren = await this.db.childrens.findUnique({
       where: { id: childrenId },
     });
@@ -91,9 +109,9 @@ class ChildrenService extends BaseService {
       throw this.error.notFound("Children not found");
     }
 
-    const updated = await this.db.childrens.update({
-      where: { id: childrenId },
-      data: {
+    const updated = await this.db.interventions.upsert({
+      where: { children_id: childrenId },
+      update: {
         is_intervented: true,
         ...(payload.referral !== undefined
           ? { referral: payload.referral }
@@ -104,9 +122,20 @@ class ChildrenService extends BaseService {
         ...(payload.education !== undefined
           ? { education: payload.education }
           : {}),
+        ...(payload.cadre_id !== undefined ? { cadre_id: cadreId } : {}),
+      },
+      create: {
+        children_id: childrenId,
+        is_intervented: true,
+        referral: payload.referral ?? false,
+        supplement: payload.supplement ?? false,
+        education: payload.education ?? false,
+        cadre_id: cadreId ?? null,
       },
       select: {
         id: true,
+        children_id: true,
+        cadre_id: true,
         is_intervented: true,
         referral: true,
         supplement: true,
@@ -154,6 +183,105 @@ class ChildrenService extends BaseService {
       where: { parent_id: parentId },
       orderBy: { created_at: "desc" },
     });
+  }
+
+  async getAllChildrenByClinic(clinicId, query) {
+    const { page, limit, offset } = getPagination(query);
+    const filter = ORMfilterable(query, ["name"]) || {};
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = { contains: q, mode: "insensitive" };
+    }
+
+    filter.measurements = {
+      some: {
+        clinic_id: clinicId,
+      },
+    };
+
+    const total = await this.db.childrens.count({ where: filter });
+
+    const data = await this.db.childrens.findMany({
+      where: filter,
+      include: {
+        parent: { select: { id: true, name: true, phone_number: true } },
+        measurements: {
+          where: { clinic_id: clinicId },
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
+      skip: offset,
+      take: limit,
+      orderBy: { created_at: "desc" },
+    });
+
+    const pagination = getMeta(total, page, limit);
+
+    return {
+      data: {
+        items: data,
+        total_case: total,
+      },
+      pagination,
+    };
+  }
+
+  async getAllRiskyChildrenByClinic(clinicId, query) {
+    const { page, limit, offset } = getPagination(query);
+
+    const filter = {
+      status: {
+        in: ["LOWRISK", "HIGHRISK"],
+      },
+      OR: [{ intervention: null }, { intervention: { is_intervented: false } }],
+      measurements: {
+        some: {
+          clinic_id: clinicId,
+        },
+      },
+    };
+
+    const q = (query.search || "").trim();
+    if (q) {
+      filter.name = { contains: q, mode: "insensitive" };
+    }
+
+    const total = await this.db.childrens.count({ where: filter });
+
+    const needReferral = await this.db.childrens.count({
+      where: {
+        ...filter,
+        status: "HIGHRISK",
+      },
+    });
+
+    const data = await this.db.childrens.findMany({
+      where: filter,
+      include: {
+        parent: { select: { id: true, name: true, phone_number: true } },
+        measurements: {
+          where: { clinic_id: clinicId },
+          orderBy: { measurement_date: "desc" },
+          take: 1,
+        },
+      },
+      skip: offset,
+      take: limit,
+      orderBy: { created_at: "desc" },
+    });
+
+    const pagination = getMeta(total, page, limit);
+
+    return {
+      data: {
+        items: data,
+        total_case: total,
+        need_referral: needReferral,
+      },
+      pagination,
+    };
   }
 
   async createChildren(info) {
@@ -251,7 +379,7 @@ class ChildrenService extends BaseService {
     }
 
     await NotificationService.createNotification({
-      recipient_id: parent_id,
+      recipient_id: existingChildren.parent_id,
       recipient_role: Roles.Parents,
       title: "Profil anak berhasil diubah",
       message: `Profil anak ${existingChildren.name} berhasil diubah.`,
@@ -287,7 +415,7 @@ class ChildrenService extends BaseService {
     });
 
     await NotificationService.createNotification({
-      recipient_id: parent_id,
+      recipient_id: existingChildren.parent_id,
       recipient_role: Roles.Parents,
       title: "Profil anak berhasil dihapus",
       message: `Profil anak ${existingChildren.name} berhasil dihapus.`,
@@ -297,6 +425,87 @@ class ChildrenService extends BaseService {
     });
 
     return true;
+  }
+
+  async exportChildPdf(childId, user) {
+    const child = await this.db.childrens.findUnique({
+      where: { id: childId },
+      include: {
+        parent: true,
+        intervention: true,
+      },
+    });
+
+    if (!child) {
+      throw BaseError.notFound("Children not found");
+    }
+
+    if (user.role === Roles.Parents) {
+      if (child.parent_id !== user.id) {
+        throw BaseError.forbidden(
+          "Access Denied: You can only export your own child's report",
+        );
+      }
+    } else if (user.role === Roles.Cadre) {
+      if (child.parent.clinic_id !== user.clinic_id) {
+        throw BaseError.forbidden(
+          "Access Denied: Child is not registered in your clinic",
+        );
+      }
+    }
+
+    const measurements = await this.db.measurements.findMany({
+      where: { children_id: childId },
+      orderBy: { measurement_date: "desc" },
+    });
+
+    const clinic = await this.db.clinic.findUnique({
+      where: { id: child.parent.clinic_id },
+    });
+
+    return {
+      child,
+      measurements,
+      clinic,
+    };
+  }
+
+  async exportClinicPdf(clinicId, user) {
+    if (user.role === Roles.Cadre) {
+      if (user.clinic_id !== clinicId) {
+        throw BaseError.forbidden(
+          "Access Denied: You can only export reports for your own clinic",
+        );
+      }
+    }
+
+    const clinic = await this.db.clinic.findUnique({
+      where: { id: clinicId },
+    });
+
+    if (!clinic) {
+      throw BaseError.notFound("Clinic not found");
+    }
+
+    const childrenList = await this.db.childrens.findMany({
+      where: {
+        parent: {
+          clinic_id: clinicId,
+        },
+      },
+      include: {
+        parent: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return {
+      clinic,
+      cadreName: user.name,
+      childrenList,
+    };
   }
 }
 
