@@ -55,15 +55,27 @@ class RegionService extends BaseService {
 
     const filter = {
       ...coverageFilter,
-      ...(ORMfilterable(query, ["name"]) || {}),
     };
 
     const q = (query.search || "").trim();
+
     if (q) {
-      filter.name = {
-        contains: q,
-        mode: "insensitive",
-      };
+      filter.OR = [
+        {
+          name: {
+            contains: q,
+            mode: "insensitive",
+          },
+        },
+        {
+          district: {
+            name: {
+              contains: q,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
     }
 
     const [totalVillages, totalCoveredVillages, villages] =
@@ -135,9 +147,9 @@ class RegionService extends BaseService {
 
       let label = "LOW";
 
-      if (percentage >= 30) {
+      if (percentage > 50) {
         label = "HIGH";
-      } else if (percentage >= 15) {
+      } else if (percentage >= 30 && percentage <= 50) {
         label = "MEDIUM";
       }
 
