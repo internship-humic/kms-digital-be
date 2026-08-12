@@ -1,6 +1,7 @@
 export default {
-  "GET /cadre": {
+  "GET /cadre/": {
     summary: "Get All Cadres",
+    description: "Retrieve a paginated list of all cadres registered in the system. (Admin only)",
 
     query: {
       page: {
@@ -26,12 +27,20 @@ export default {
     },
 
     response: {
+      success: true,
+      status: "OK",
+      message: "Cadres retrieved successfully",
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 1,
+        totalPages: 1,
+      },
       data: [
         {
           id: "cadre-uuid",
           name: "Siti Aminah",
           email: "siti@mail.com",
-
           clinic: {
             id: "clinic-uuid",
             name: "Posyandu Melati",
@@ -44,6 +53,7 @@ export default {
 
   "PATCH /cadre/:id": {
     summary: "Update Cadre",
+    description: "Update cadre profile details. All fields are optional — send only the fields you want to change. (Admin only)",
 
     params: {
       id: "cadre-uuid",
@@ -51,30 +61,42 @@ export default {
 
     request: {
       name: "Siti Nurhaliza",
-      email: "siti@mail.com",
+      email: "siti.nurhaliza@mail.com",
       clinic_id: "clinic-uuid",
     },
 
     response: {
-      id: "cadre-uuid",
-      name: "Siti Nurhaliza",
-      email: "siti@mail.com",
-
-      clinic: {
-        id: "clinic-uuid",
-        name: "Posyandu Melati",
-        address: "Jl. Melati",
+      success: true,
+      status: "OK",
+      message: "Cadre updated successfully",
+      pagination: null,
+      data: {
+        id: "cadre-uuid",
+        name: "Siti Nurhaliza",
+        email: "siti.nurhaliza@mail.com",
+        clinic: {
+          id: "clinic-uuid",
+          name: "Posyandu Melati",
+          address: "Jl. Melati",
+        },
       },
     },
   },
 
   "DELETE /cadre/:id": {
     summary: "Delete Cadre",
+    description: "Permanently delete a cadre account from the system. (Admin only)",
 
     params: {
       id: "cadre-uuid",
     },
 
-    response: true,
+    response: {
+      success: true,
+      status: "OK",
+      message: "Cadre deleted successfully",
+      pagination: null,
+      data: true,
+    },
   },
 };

@@ -1,7 +1,8 @@
 export default {
-  "GET /notification": {
+  "GET /notification/": {
     summary: "Get All Notifications",
-    description: "Retrieve notifications scoped to the current user's role and recipient ID. Admins can view all notifications.",
+    description:
+      "Retrieve notifications scoped to the current user's role and recipient ID. Admins can view all notifications and filter by recipient.",
     query: {
       page: {
         type: "integer",
@@ -20,7 +21,8 @@ export default {
       },
       category: {
         type: "string",
-        description: "Filter by notification category (ARTICLE, MEASUREMENT, SCHEDULE, ANNOUNCEMENT, ACCOUNT)",
+        description:
+          "Filter by notification category (ARTICLE, MEASUREMENT, SCHEDULE, ANNOUNCEMENT, ACCOUNT)",
         example: "MEASUREMENT",
       },
       recipient_id: {
@@ -30,7 +32,7 @@ export default {
       },
       recipient_role: {
         type: "string",
-        description: "Filter by recipient role (Admin only)",
+        description: "Filter by recipient role (Admin only): ADMIN, PARENTS, or CADRE",
         example: "PARENTS",
       },
     },
@@ -50,7 +52,8 @@ export default {
           recipient_id: "parent-uuid-1",
           recipient_role: "PARENTS",
           title: "Status Gizi Anak",
-          message: "Halo Ibu, pengukuran bulanan anak Anda telah diperbarui. Silakan cek detailnya.",
+          message:
+            "Halo Ibu, pengukuran bulanan anak Anda telah diperbarui. Silakan cek detailnya.",
           category: "MEASUREMENT",
           is_read: false,
           reference_id: "measurement-uuid-123",
@@ -63,7 +66,8 @@ export default {
 
   "GET /notification/:id": {
     summary: "Get Notification By Id",
-    description: "Retrieve a specific notification by its ID. Users can only access their own notifications, while Admins can access any.",
+    description:
+      "Retrieve a specific notification by its ID. Non-admin users can only access their own notifications.",
     params: {
       id: "notification-uuid-1",
     },
@@ -71,12 +75,14 @@ export default {
       success: true,
       status: "OK",
       message: "Notification retrieved successfully",
+      pagination: null,
       data: {
         id: "notification-uuid-1",
         recipient_id: "parent-uuid-1",
         recipient_role: "PARENTS",
         title: "Status Gizi Anak",
-        message: "Halo Ibu, pengukuran bulanan anak Anda telah diperbarui. Silakan cek detailnya.",
+        message:
+          "Halo Ibu, pengukuran bulanan anak Anda telah diperbarui. Silakan cek detailnya.",
         category: "MEASUREMENT",
         is_read: false,
         reference_id: "measurement-uuid-123",
@@ -86,9 +92,10 @@ export default {
     },
   },
 
-  "POST /notification": {
+  "POST /notification/": {
     summary: "Create Notification",
-    description: "Send a notification to a specific recipient (Admin only). Checks recipient existence before creation.",
+    description:
+      "Send a notification to a specific recipient (Admin only). Validates recipient existence before creation.",
     request: {
       recipient_id: "parent-uuid-1",
       recipient_role: "PARENTS",
@@ -102,6 +109,7 @@ export default {
       success: true,
       status: "CREATED",
       message: "Notification created successfully",
+      pagination: null,
       data: {
         id: "new-notification-uuid",
         recipient_id: "parent-uuid-1",
@@ -119,7 +127,8 @@ export default {
 
   "PATCH /notification/:id": {
     summary: "Update Notification",
-    description: "Update notification fields. Non-admins can only update 'is_read'. Admins can update any field.",
+    description:
+      "Update notification fields. Non-admins can only update 'is_read'. Admins can update any field including title, message, and category.",
     params: {
       id: "notification-uuid-1",
     },
@@ -130,12 +139,14 @@ export default {
       success: true,
       status: "OK",
       message: "Notification updated successfully",
+      pagination: null,
       data: {
         id: "notification-uuid-1",
         recipient_id: "parent-uuid-1",
         recipient_role: "PARENTS",
         title: "Status Gizi Anak",
-        message: "Halo Ibu, pengukuran bulanan anak Anda telah diperbarui. Silakan cek detailnya.",
+        message:
+          "Halo Ibu, pengukuran bulanan anak Anda telah diperbarui. Silakan cek detailnya.",
         category: "MEASUREMENT",
         is_read: true,
         reference_id: "measurement-uuid-123",
@@ -147,7 +158,7 @@ export default {
 
   "DELETE /notification/:id": {
     summary: "Delete Notification",
-    description: "Delete a notification by ID (Admin only).",
+    description: "Permanently delete a notification by ID (Admin only).",
     params: {
       id: "notification-uuid-1",
     },
@@ -155,6 +166,7 @@ export default {
       success: true,
       status: "OK",
       message: "Notification deleted successfully",
+      pagination: null,
       data: true,
     },
   },
