@@ -23,7 +23,7 @@ class ParentsSeeder extends BaseSeeder {
         parents.push({
           id: `${counter}`,
           name: `Parent ${counter}`,
-          email: `parent${counter}@gmail.com`,
+          email: `parent${counter}@jagacilik.com`,
           password: await bcrypt.hash("password123", 10),
           address: `Jl. Mawar No. ${counter}, Bandung`,
           clinic_id: clinic.id,
