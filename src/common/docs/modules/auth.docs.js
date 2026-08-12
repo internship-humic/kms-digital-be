@@ -54,6 +54,32 @@ export default {
     },
   },
 
+  "GET /auth/me": {
+    summary: "Get Current User Profile",
+    description:
+      "Retrieve profile information of the currently authenticated user based on their JWT token",
+    response: {
+      success: true,
+      status: "OK",
+      message: "Profile retrieved successfully",
+      pagination: null,
+      data: {
+        user: {
+          id: "uuid-cadre-1",
+          name: "John Doe",
+          email: "john@example.com",
+          clinic_id: "clinic-uuid-1",
+          clinic: {
+            id: "clinic-uuid-1",
+            name: "Posyandu Melati",
+            address: "Jl. Melati",
+          },
+        },
+        role: "CADRE",
+      },
+    },
+  },
+
   "POST /auth/activation": {
     summary: "Activate Cadre",
     description:

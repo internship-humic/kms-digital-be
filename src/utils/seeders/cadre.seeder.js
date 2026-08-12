@@ -24,13 +24,13 @@ class CadreSeeder extends BaseSeeder {
       const cadres = [
         {
           name: `${clinic.name} Cadre 1`,
-          email: `cadre1_clinic${clinic.id}@gmail.com`,
+          email: `cadre1_clinic${clinic.id}@jagacilik.com`,
           password,
           clinic_id: clinic.id,
         },
         {
           name: `${clinic.name} Cadre 2`,
-          email: `cadre2_clinic${clinic.id}@gmail.com`,
+          email: `cadre2_clinic${clinic.id}@jagacilik.com`,
           password,
           clinic_id: clinic.id,
         },

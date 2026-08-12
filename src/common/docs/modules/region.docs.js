@@ -117,4 +117,76 @@ export default {
       ],
     },
   },
+
+  "GET /region/covered": {
+    summary: "Get Covered Regions",
+    description:
+      "Retrieve a paginated list of villages covered by posyandu clinics, including regional risk assessment based on risky child percentage (Admin only)",
+
+    query: {
+      page: {
+        type: "integer",
+        description: "Page number for pagination",
+        example: 1,
+      },
+      limit: {
+        type: "integer",
+        description: "Number of items per page",
+        example: 10,
+      },
+      search: {
+        type: "string",
+        description: "Search keyword to filter by village or district name",
+        example: "BAKONGAN",
+      },
+      risk: {
+        type: "string",
+        description: "Filter regions by risk label ('LOW', 'MEDIUM', 'HIGH')",
+        example: "MEDIUM",
+      },
+      minPercentage: {
+        type: "number",
+        description:
+          "Filter regions with a minimum percentage of risky children",
+        example: 10.0,
+      },
+      maxPercentage: {
+        type: "number",
+        description:
+          "Filter regions with a maximum percentage of risky children",
+        example: 50.0,
+      },
+    },
+
+    response: {
+      success: true,
+      status: "OK",
+      message: "Covered regions retrieved successfully",
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 1,
+      },
+      data: {
+        coverage: {
+          totalVillages: 8345,
+          totalCoveredVillages: 10,
+          uncoveredVillages: 8335,
+          coveredVillagePercentage: 0.11983,
+        },
+        riskRegions: [
+          {
+            districtId: "3301010",
+            district: "BAKONGAN",
+            villageId: "3301010001",
+            village: "KEUDE BAKONGAN",
+            totalChildren: 10,
+            riskyChildren: 3,
+            percentage: 30.0,
+            label: "MEDIUM",
+          },
+        ],
+      },
+    },
+  },
 };

@@ -18,7 +18,7 @@ class AdminSeeder extends BaseSeeder {
 
     if (exists) {
       this.log.warn(`Admin with email ${normalized} already exists.`);
-      process.exit(1);
+      process.exit(0);
     }
 
     const hashed = await hashPassword(password);
