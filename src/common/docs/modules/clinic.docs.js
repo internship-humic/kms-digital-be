@@ -1,10 +1,11 @@
 export default {
   "GET /clinic/village/:villageId": {
     summary: "Get Clinics by Village ID",
-    description: "Retrieve all clinics registered within a specific village ID",
+    description:
+      "Retrieve all clinics registered within a specific village ID. Accessible by all users (public).",
 
     params: {
-      villageId: "uuid-village-1",
+      villageId: "1101010001",
     },
 
     response: {
@@ -17,7 +18,7 @@ export default {
           id: "uuid-clinic-1",
           name: "Posyandu Mawar 1",
           address: "Jl. Melati No. 3",
-          village_id: "uuid-village-1",
+          village_id: "1101010001",
           created_at: "2026-06-30T00:00:00.000Z",
           updated_at: "2026-06-30T00:00:00.000Z",
         },
@@ -25,8 +26,9 @@ export default {
     },
   },
 
-  "GET /clinic": {
+  "GET /clinic/": {
     summary: "Get All Clinics",
+    description: "Retrieve a paginated list of all clinics in the system. Requires authentication.",
 
     query: {
       page: {
@@ -52,6 +54,15 @@ export default {
     },
 
     response: {
+      success: true,
+      status: "OK",
+      message: "Clinics retrieved successfully",
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 1,
+        totalPages: 1,
+      },
       data: [
         {
           id: "clinic-uuid",
@@ -72,57 +83,72 @@ export default {
 
   "GET /clinic/:id": {
     summary: "Get Clinic By Id",
+    description: "Retrieve full details of a clinic including its registered parents and cadres. Requires authentication.",
 
     params: {
       id: "clinic-uuid",
     },
 
     response: {
-      id: "clinic-uuid",
-      name: "Posyandu Melati",
-      address: "Jl. Melati No.1",
-
-      village: {
-        id: "village-uuid",
-        name: "Kelurahan A",
+      success: true,
+      status: "OK",
+      message: "Clinic retrieved successfully",
+      pagination: null,
+      data: {
+        id: "clinic-uuid",
+        name: "Posyandu Melati",
+        address: "Jl. Melati No.1",
+        village: {
+          id: "village-uuid",
+          name: "Kelurahan A",
+        },
+        parents: [
+          {
+            id: "parent-uuid",
+            name: "Budi",
+            phone_number: "08123456789",
+          },
+        ],
+        Cadre: [
+          {
+            id: "cadre-uuid",
+            name: "Siti",
+            email: "siti@mail.com",
+          },
+        ],
       },
-
-      parents: [
-        {
-          id: "parent-uuid",
-          name: "Budi",
-          phone_number: "08123456789",
-        },
-      ],
-
-      Cadre: [
-        {
-          id: "cadre-uuid",
-          name: "Siti",
-          email: "siti@mail.com",
-        },
-      ],
     },
   },
 
-  "POST /clinic": {
+  "POST /clinic/": {
     summary: "Create Clinic",
+    description: "Register a new posyandu clinic and associate it with a specific village. (Admin only)",
+
     request: {
       name: "Posyandu Melati",
       address: "Jl. Melati No.1",
-      village_id: "village-uuid",
+      village_id: "1101010001",
     },
 
     response: {
-      id: "clinic-uuid",
-      name: "Posyandu Melati",
-      address: "Jl. Melati No.1",
-      village_id: "village-uuid",
+      success: true,
+      status: "CREATED",
+      message: "Clinic created successfully",
+      pagination: null,
+      data: {
+        id: "clinic-uuid",
+        name: "Posyandu Melati",
+        address: "Jl. Melati No.1",
+        village_id: "1101010001",
+        created_at: "2026-07-01T08:00:00.000Z",
+        updated_at: "2026-07-01T08:00:00.000Z",
+      },
     },
   },
 
   "PATCH /clinic/:id": {
     summary: "Update Clinic",
+    description: "Update clinic details. All fields are optional — send only the fields you want to change. (Admin only)",
 
     params: {
       id: "clinic-uuid",
@@ -131,23 +157,39 @@ export default {
     request: {
       name: "Posyandu Melati Baru",
       address: "Jl. Mawar No.2",
+      village_id: "1101010001",
     },
 
     response: {
-      id: "clinic-uuid",
-      name: "Posyandu Melati Baru",
-      address: "Jl. Mawar No.2",
-      village_id: "village-uuid",
+      success: true,
+      status: "OK",
+      message: "Clinic updated successfully",
+      pagination: null,
+      data: {
+        id: "clinic-uuid",
+        name: "Posyandu Melati Baru",
+        address: "Jl. Mawar No.2",
+        village_id: "1101010001",
+        created_at: "2026-07-01T08:00:00.000Z",
+        updated_at: "2026-07-07T09:30:00.000Z",
+      },
     },
   },
 
   "DELETE /clinic/:id": {
     summary: "Delete Clinic",
+    description: "Permanently delete a clinic by ID. (Admin only)",
 
     params: {
       id: "clinic-uuid",
     },
 
-    response: true,
+    response: {
+      success: true,
+      status: "OK",
+      message: "Clinic deleted successfully",
+      pagination: null,
+      data: true,
+    },
   },
 };
