@@ -107,6 +107,8 @@ export default {
 
   "PATCH /auth/profile": {
     summary: "Update Current User Profile",
+    description:
+      "Update name, email, address, phone number, or clinic for the currently authenticated user. All fields are optional.",
 
     request: {
       name: "John Doe",
@@ -117,59 +119,89 @@ export default {
     },
 
     response: {
-      user: {
-        id: "user-uuid",
-        name: "John Doe",
-        email: "john@example.com",
-        address: "Jl. Mawar No. 12",
-        phone_number: "08123456789",
-        clinic: {
-          id: "clinic-uuid",
-          name: "Posyandu Melati",
-          address: "Jl. Melati",
+      success: true,
+      status: "OK",
+      message: "Profile updated successfully",
+      pagination: null,
+      data: {
+        user: {
+          id: "user-uuid",
+          name: "John Doe",
+          email: "john@example.com",
+          address: "Jl. Mawar No. 12",
+          phone_number: "08123456789",
+          clinic: {
+            id: "clinic-uuid",
+            name: "Posyandu Melati",
+            address: "Jl. Melati",
+          },
         },
+        role: "PARENTS",
       },
-      role: "Parents",
     },
   },
 
   "PATCH /auth/change-password": {
     summary: "Change Password",
+    description:
+      "Change the password of the currently authenticated user. Requires providing the current password for verification.",
 
     request: {
-      current_password: "OldPassword123",
-      new_password: "NewPassword123",
-      password_confirmation: "NewPassword123",
+      current_password: "OldPassword123!",
+      new_password: "NewPassword456!",
+      password_confirmation: "NewPassword456!",
     },
 
     response: {
-      updated: true,
+      success: true,
+      status: "OK",
+      message: "Password changed successfully",
+      pagination: null,
+      data: {
+        updated: true,
+      },
     },
   },
 
   "POST /auth/forgot-password": {
     summary: "Request Password Reset",
+    description:
+      "Send a password reset link to the provided email address. The link is valid for a limited time.",
 
     request: {
       email: "john@example.com",
     },
 
     response: {
-      sent: true,
+      success: true,
+      status: "OK",
+      message: "Password reset email sent",
+      pagination: null,
+      data: {
+        sent: true,
+      },
     },
   },
 
   "POST /auth/reset-password": {
     summary: "Reset Password",
+    description:
+      "Reset the user's password using a valid reset token obtained from the forgot-password email.",
 
     request: {
-      token: "jwt-reset-token",
-      new_password: "NewPassword123",
-      password_confirmation: "NewPassword123",
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      new_password: "NewPassword456!",
+      password_confirmation: "NewPassword456!",
     },
 
     response: {
-      updated: true,
+      success: true,
+      status: "OK",
+      message: "Password reset successfully",
+      pagination: null,
+      data: {
+        updated: true,
+      },
     },
   },
 };
